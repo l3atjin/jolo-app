@@ -1,8 +1,8 @@
 import 'react-native-url-polyfill/auto'
 import { useState, useEffect } from 'react'
-import { supabase } from './api/supabase'
-import Auth from './components/Auth'
-import Account from './components/Account'
+import { supabase } from './src/api/supabase'
+import Auth from './src/components/Auth'
+import Account from './src/components/Account'
 import { View } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 
