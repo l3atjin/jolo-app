@@ -1,7 +1,10 @@
 import React from 'react'
+import { View, Text } from 'react-native'
 
-export default function SearchPage() {
+export default function SearchPage( {navigation} ) {
   return (
-    <div>SearchPage</div>
+    <View>
+      <Text>SEARCH PAGE</Text>
+    </View>
   )
 }
