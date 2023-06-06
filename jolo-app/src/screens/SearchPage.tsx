@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Button, FlatList, TextInput } from 'react-native'
+import Post from '../components/Post';
 
 export default function SearchPage( { navigation } ) {
   const [searchParams, setSearchParams] = useState({
@@ -9,14 +10,26 @@ export default function SearchPage( { navigation } ) {
     //...add more search parameters as needed
   });
 
-  const [posts, setPosts] = useState([]);
+  const tempPost = {
+    id: "007",
+    authorName: "Batjin",
+    authorPicture: "PIC",
+    authorType: "Driver",
+    departure: "Darkhan",
+    destination: "Ulaanbaatar",
+    date: "Jun 5th",
+    time: "Morning",
+    fee: 25000,
+  }
+
+  const [posts, setPosts] = useState([tempPost]);
 
   async function submitSearch() {
     const newPosts = await fetchPosts(searchParams);
     setPosts(newPosts);
   }
 
-  const handleChange = (name, value) => {
+  const handleChange = (name: string, value: string) => {
     setSearchParams(prevParams => ({
       ...prevParams,
       [name]: value,
@@ -45,9 +58,9 @@ export default function SearchPage( { navigation } ) {
       <FlatList
         data={posts}
         renderItem={({ item }) => (
-          <Text>{item.title} {item.description}</Text>
-        )}
-        keyExtractor={(item) => item.id}
+          <Post post = {item} />)
+        }
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
@@ -58,6 +71,7 @@ async function fetchPosts(searchParams) {
   // Replace this with your actual API request.
   const response = await fetch(`/api/posts?departure=${searchParams.departure}&destination=${searchParams.destination}&date=${searchParams.date}`);
   const posts = await response.json();
+
 
   return posts;
 }
