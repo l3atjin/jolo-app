@@ -4,19 +4,21 @@ import LoginPage from '../screens/LoginPage';
 import SearchPage from '../screens/SearchPage';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
 console.log("In root navigator")
+
 export default function RootNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name="Login" component={LoginPage}></Stack.Screen>
-        <Stack.Screen name="Search" component={SearchPage}></Stack.Screen>
-      </Stack.Navigator>
+      <Tab.Navigator initialRouteName='Login'>
+        <Tab.Screen name="Login" component={LoginPage} />
+        <Tab.Screen name="Search" component={SearchPage} />
+      </Tab.Navigator>
     </NavigationContainer>
-    
   )
 }
+
