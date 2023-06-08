@@ -1,7 +1,10 @@
 import React from 'react'
+import { View, Text } from 'react-native'
 
 export default function ProfilePage() {
   return (
-    <div>ProfilePage</div>
+    <View>
+      <Text>Car go vroom</Text>
+    </View>
   )
 }
