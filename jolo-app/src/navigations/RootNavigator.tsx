@@ -1,23 +1,23 @@
 import 'react-native-gesture-handler';
 import React from 'react'
 import LoginPage from '../screens/LoginPage';
-import SearchPage from '../screens/SearchPage';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainNavigation from './MainNavigation';
 
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 console.log("In root navigator")
 
 export default function RootNavigator() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName='Login'>
-        <Tab.Screen name="Login" component={LoginPage} />
-        <Tab.Screen name="Search" component={SearchPage} />
-      </Tab.Navigator>
+      <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginPage} />
+        <Stack.Screen name="MainNavigation" component={MainNavigation} />
+      </Stack.Navigator>
     </NavigationContainer>
   )
 }

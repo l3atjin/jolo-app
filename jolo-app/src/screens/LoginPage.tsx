@@ -4,7 +4,6 @@ import Account from '../components/Account'
 import { Pressable, View, Text } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import { supabase } from '../api/supabase'
-import { Button } from 'react-native-elements'
 
 export default function LoginPage( {navigation} ) {
   const [session, setSession] = useState<Session | null>(null)
@@ -20,7 +19,7 @@ export default function LoginPage( {navigation} ) {
   }, [])
 
   const onPressHandler = () => {
-    navigation.navigate('Search')
+    navigation.navigate('MainNavigation')
   }
 
   console.log("in Login Page")
