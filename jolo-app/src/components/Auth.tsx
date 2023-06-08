@@ -4,28 +4,26 @@ import { supabase } from '../api/supabase'
 import { Button, Input } from 'react-native-elements'
 
 export default function Auth() {
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-
-  async function signInWithEmail() {
-    setLoading(true)
+  
+  async function signInWithPhone() {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-
+      phone,
+      password
+    });
     if (error) Alert.alert(error.message)
-    setLoading(false)
+    setLoading(false);
   }
 
-  async function signUpWithEmail() {
+  async function signUpWithPhone() {
     setLoading(true)
     const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
+      phone,
+      password,
     })
-
     if (error) Alert.alert(error.message)
     setLoading(false)
   }
@@ -35,10 +33,10 @@ export default function Auth() {
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
-          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
+          leftIcon={{ type: 'font-awesome', name: 'phone' }}
+          onChangeText={(text) => setPhone(text)}
+          value={phone}
+          placeholder="99999999"
           autoCapitalize={'none'}
         />
       </View>
@@ -54,10 +52,10 @@ export default function Auth() {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+        <Button title="Sign in" disabled={loading} onPress={() => signInWithPhone()} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+        <Button title="Sign up" disabled={loading} onPress={() => signUpWithPhone()} />
       </View>
     </View>
   )
