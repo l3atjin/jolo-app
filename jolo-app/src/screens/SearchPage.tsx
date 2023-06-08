@@ -1,6 +1,9 @@
+import { createClient } from '@supabase/supabase-js';
 import React, { useState } from 'react'
 import { View, Text, Button, FlatList, TextInput } from 'react-native'
 import Post from '../components/Post';
+import {SUPABASE_URL} from '@env'
+import {SUPABASE_ANON_KEY} from '@env'
 
 export default function SearchPage( { navigation } ) {
   const [searchParams, setSearchParams] = useState({
@@ -13,8 +16,6 @@ export default function SearchPage( { navigation } ) {
   const tempPost = {
     id: "007",
     authorName: "Batjin",
-    authorPicture: "PIC",
-    authorType: "Driver",
     departure: "Darkhan",
     destination: "Ulaanbaatar",
     date: "Jun 5th",
@@ -69,8 +70,21 @@ export default function SearchPage( { navigation } ) {
 async function fetchPosts(searchParams) {
   // Make an API request to fetch posts based on the search parameters.
   // Replace this with your actual API request.
-  const response = await fetch(`/api/posts?departure=${searchParams.departure}&destination=${searchParams.destination}&date=${searchParams.date}`);
-  const posts = await response.json();
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      fee,
+      available_seats,
+      departure_time,
+      user_id:profiles (first_name),
+      departure_location_id:locations (location_name),
+      destination_location_id:locations (location_name)`)
+
+  if (error) console.log('Error: ', error)
+  else console.log('Posts: ', data)
 
 
   return posts;
