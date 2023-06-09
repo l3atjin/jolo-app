@@ -1,9 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Button, FlatList, TextInput } from 'react-native'
 import Post from '../components/Post';
 import {SUPABASE_URL} from '@env'
 import {SUPABASE_ANON_KEY} from '@env'
+
+interface PostType {
+  id: any;
+  fee: number;
+  available_seats: number;
+  departure_time: Date;
+  author_name: string;
+  departure_name: string;
+  destination_name: string;
+}
 
 export default function SearchPage( { navigation } ) {
   const [searchParams, setSearchParams] = useState({
@@ -13,21 +23,27 @@ export default function SearchPage( { navigation } ) {
     //...add more search parameters as needed
   });
 
-  const tempPost = {
-    id: "007",
-    authorName: "Batjin",
-    departure: "Darkhan",
-    destination: "Ulaanbaatar",
-    date: "Jun 5th",
-    time: "Morning",
-    fee: 25000,
-  }
 
-  const [posts, setPosts] = useState([tempPost]);
+  const [posts, setPosts] = useState<PostType[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch posts on component mount
+  useEffect(() => {
+    async function fetchInitialPosts() {
+      const initialPosts = await fetchPosts(searchParams);
+      setPosts(initialPosts);
+      setIsLoading(false); 
+    }
+
+    fetchInitialPosts();
+  }, []);
 
   async function submitSearch() {
+    setIsLoading(true);
     const newPosts = await fetchPosts(searchParams);
-    setPosts(newPosts);
+    setPosts(newPosts)
+    setIsLoading(false);
+    console.log("After state init")
   }
 
   const handleChange = (name: string, value: string) => {
@@ -56,36 +72,57 @@ export default function SearchPage( { navigation } ) {
       />
       <Button title="Search" onPress={submitSearch} />
 
-      <FlatList
-        data={posts}
-        renderItem={({ item }) => (
-          <Post post = {item} />)
-        }
-        keyExtractor={(item) => item.id.toString()}
-      />
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <FlatList
+          data={posts}
+          renderItem={({ item }) => (
+            <Post post = {item} />)
+          }
+          keyExtractor={(item) => item.id.toString()}
+        />
+      )}
     </View>
   );
 }
 
-async function fetchPosts(searchParams) {
-  // Make an API request to fetch posts based on the search parameters.
-  // Replace this with your actual API request.
+async function fetchPosts(searchParams: { departure: string, destination: string, date: string }): Promise<PostType[] | null> {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
 
   const { data, error } = await supabase
     .from('posts')
     .select(`
+      id,
       fee,
       available_seats,
       departure_time,
-      user_id:profiles (first_name),
-      departure_location_id:locations (location_name),
-      destination_location_id:locations (location_name)`)
+      user_id:profiles (first_name),  
+      departure_location_id:locations!posts_departure_location_id_fkey(location_name),
+      destination_location_id:locations!posts_destination_location_id_fkey(location_name)
+    `)
 
-  if (error) console.log('Error: ', error)
-  else console.log('Posts: ', data)
+  if (error) {
+    console.log('Error: ', error)
+    return null;
+  }
 
+  
+  
+  const transformedData: PostType[] = data.map(post => {
+    return {
+      id: post.id,
+      fee: post.fee,
+      available_seats: post.available_seats,
+      departure_time: post.departure_time,
+      author_name: post.user_id.first_name,
+      departure_name: post.departure_location_id.location_name,
+      destination_name: post.destination_location_id.location_name
+    };
+  });
+  
+  console.log(JSON.stringify(transformedData, null, 2))
+  console.log(JSON.stringify(data, null, 2))
 
-  return posts;
+  return transformedData;
 }
