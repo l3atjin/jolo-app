@@ -5,6 +5,8 @@ import Post from '../components/Post';
 import {SUPABASE_URL} from '@env'
 import {SUPABASE_ANON_KEY} from '@env'
 import { PostType } from '../types';
+import { StyleSheet } from 'react-native';
+
 
 export default function SearchPage( { navigation } ) {
   const [searchParams, setSearchParams] = useState({
@@ -45,28 +47,32 @@ export default function SearchPage( { navigation } ) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
+        style={styles.input}
         placeholder="Departure"
         value={searchParams.departure}
         onChangeText={(text) => handleChange('departure', text)}
       />
       <TextInput
+        style={styles.input}
         placeholder="Destination"
         value={searchParams.destination}
         onChangeText={(text) => handleChange('destination', text)}
       />
       <TextInput
+        style={styles.input}
         placeholder="Date"
         value={searchParams.date}
         onChangeText={(text) => handleChange('date', text)}
       />
-      <Button title="Search" onPress={submitSearch} />
-
+      <Button title="Search" onPress={submitSearch} color={styles.button.color}/>
+  
       {isLoading ? (
-        <Text>Loading...</Text>
+        <Text style={styles.loadingText}>Loading...</Text>
       ) : (
         <FlatList
+          style={styles.flatList}
           data={posts}
           renderItem={({ item }) => (
             <Post post = {item} />)
@@ -77,6 +83,40 @@ export default function SearchPage( { navigation } ) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    borderRadius: 5,
+    color: '#fff',
+    textAlign: 'center',
+    padding: 10,
+    marginBottom: 10,
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginBottom: 10,
+    fontSize: 18,
+    color: '#000',
+  },
+  flatList: {
+    marginTop: 20,
+  },
+});
 
 async function fetchPosts(searchParams: { departure: string, destination: string, date: string }): Promise<PostType[] | null> {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -98,8 +138,6 @@ async function fetchPosts(searchParams: { departure: string, destination: string
     return null;
   }
 
-  
-  
   const transformedData: PostType[] = data.map(post => {
     return {
       id: post.id,
