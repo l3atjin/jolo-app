@@ -1,15 +1,6 @@
 import React from 'react'
 import { View, Text, Image } from 'react-native';
-
-interface PostType {
-  id: any;
-  fee: number;
-  available_seats: number;
-  departure_time: Date;
-  author_name: string;
-  departure_name: string;
-  destination_name: string;
-}
+import { PostType } from '../types';
 
 const Post: React.FC<{ post: PostType }> = ({ post }) => {
 return (

@@ -4,16 +4,7 @@ import { View, Text, Button, FlatList, TextInput } from 'react-native'
 import Post from '../components/Post';
 import {SUPABASE_URL} from '@env'
 import {SUPABASE_ANON_KEY} from '@env'
-
-interface PostType {
-  id: any;
-  fee: number;
-  available_seats: number;
-  departure_time: Date;
-  author_name: string;
-  departure_name: string;
-  destination_name: string;
-}
+import { PostType } from '../types';
 
 export default function SearchPage( { navigation } ) {
   const [searchParams, setSearchParams] = useState({
