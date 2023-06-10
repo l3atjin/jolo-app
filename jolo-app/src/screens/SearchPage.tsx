@@ -1,14 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react'
-import { View, Text, Button, FlatList, TextInput } from 'react-native'
+import { View, Text, Button, FlatList, TextInput, Pressable } from 'react-native'
 import Post from '../components/Post';
 import {SUPABASE_URL} from '@env'
 import {SUPABASE_ANON_KEY} from '@env'
 import { PostType } from '../types';
 import { StyleSheet } from 'react-native';
+import { useUserType } from '../context/UserTypeProvider';
 
 
 export default function SearchPage( { navigation } ) {
+  const [userType, setUserType] = useUserType();
   const [searchParams, setSearchParams] = useState({
     departure: '',
     destination: '',
@@ -30,6 +32,8 @@ export default function SearchPage( { navigation } ) {
 
     fetchInitialPosts();
   }, []);
+
+  console.log("User type is", userType)
 
   async function submitSearch() {
     setIsLoading(true);
