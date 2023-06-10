@@ -19,7 +19,7 @@ export default function LoginPage( {navigation} ) {
   }, [])
 
   const onPressHandler = () => {
-    navigation.navigate('MainNavigation')
+    navigation.navigate('LensPage')
   }
 
   console.log("in Login Page")
