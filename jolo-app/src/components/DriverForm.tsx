@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-export default function ProfilePage() {
+export default function DriverForm() {
   return (
     <View>
-      <Text>Car go vroom</Text>
+      <Text>Driver form</Text>
     </View>
   );
 }

@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 // Define your context
-const UserTypeContext = createContext();
+const UserTypeContext = createContext(null);
 
 // Define a provider component
 export const UserTypeProvider = ({ children }) => {
-  const [userType, setUserType] = useState('rider'); // Initial state
+  const [userType, setUserType] = useState("rider"); // Initial state
 
   return (
     <UserTypeContext.Provider value={[userType, setUserType]}>

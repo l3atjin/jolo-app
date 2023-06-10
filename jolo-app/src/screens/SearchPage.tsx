@@ -1,23 +1,28 @@
-import { createClient } from '@supabase/supabase-js';
-import React, { useEffect, useState } from 'react'
-import { View, Text, Button, FlatList, TextInput, Pressable } from 'react-native'
-import Post from '../components/Post';
-import {SUPABASE_URL} from '@env'
-import {SUPABASE_ANON_KEY} from '@env'
-import { PostType } from '../types';
-import { StyleSheet } from 'react-native';
-import { useUserType } from '../context/UserTypeProvider';
+import { createClient } from "@supabase/supabase-js";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  TextInput,
+  Pressable,
+} from "react-native";
+import Post from "../components/Post";
+import { SUPABASE_URL } from "@env";
+import { SUPABASE_ANON_KEY } from "@env";
+import { PostType } from "../types";
+import { StyleSheet } from "react-native";
+import { useUserType } from "../context/UserTypeProvider";
 
-
-export default function SearchPage( { navigation } ) {
-  const [userType, setUserType] = useUserType();
+export default function SearchPage({ navigation }) {
+  const [userType] = useUserType();
   const [searchParams, setSearchParams] = useState({
-    departure: '',
-    destination: '',
-    date: '',
+    departure: "",
+    destination: "",
+    date: "",
     //...add more search parameters as needed
   });
-
 
   const [posts, setPosts] = useState<PostType[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,24 +32,24 @@ export default function SearchPage( { navigation } ) {
     async function fetchInitialPosts() {
       const initialPosts = await fetchPosts(searchParams);
       setPosts(initialPosts);
-      setIsLoading(false); 
+      setIsLoading(false);
     }
 
     fetchInitialPosts();
   }, []);
 
-  console.log("User type is", userType)
+  console.log("User type is", userType);
 
   async function submitSearch() {
     setIsLoading(true);
     const newPosts = await fetchPosts(searchParams);
-    setPosts(newPosts)
+    setPosts(newPosts);
     setIsLoading(false);
-    console.log("After state init")
+    console.log("After state init");
   }
 
   const handleChange = (name: string, value: string) => {
-    setSearchParams(prevParams => ({
+    setSearchParams((prevParams) => ({
       ...prevParams,
       [name]: value,
     }));
@@ -56,31 +61,33 @@ export default function SearchPage( { navigation } ) {
         style={styles.input}
         placeholder="Departure"
         value={searchParams.departure}
-        onChangeText={(text) => handleChange('departure', text)}
+        onChangeText={(text) => handleChange("departure", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Destination"
         value={searchParams.destination}
-        onChangeText={(text) => handleChange('destination', text)}
+        onChangeText={(text) => handleChange("destination", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Date"
         value={searchParams.date}
-        onChangeText={(text) => handleChange('date', text)}
+        onChangeText={(text) => handleChange("date", text)}
       />
-      <Button title="Search" onPress={submitSearch} color={styles.button.color}/>
-  
+      <Button
+        title="Search"
+        onPress={submitSearch}
+        color={styles.button.color}
+      />
+
       {isLoading ? (
         <Text style={styles.loadingText}>Loading...</Text>
       ) : (
         <FlatList
           style={styles.flatList}
           data={posts}
-          renderItem={({ item }) => (
-            <Post post = {item} />)
-          }
+          renderItem={({ item }) => <Post post={item} />}
           keyExtractor={(item) => item.id.toString()}
         />
       )}
@@ -92,42 +99,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 10,
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     borderRadius: 5,
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     padding: 10,
     marginBottom: 10,
   },
   loadingText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 10,
     fontSize: 18,
-    color: '#000',
+    color: "#000",
   },
   flatList: {
     marginTop: 20,
   },
 });
 
-async function fetchPosts(searchParams: { departure: string, destination: string, date: string }): Promise<PostType[] | null> {
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+async function fetchPosts(searchParams: {
+  departure: string;
+  destination: string;
+  date: string;
+}): Promise<PostType[] | null> {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const { data, error } = await supabase
-    .from('posts')
-    .select(`
+  const { data, error } = await supabase.from("posts").select(`
       id,
       fee,
       available_seats,
@@ -135,14 +144,14 @@ async function fetchPosts(searchParams: { departure: string, destination: string
       user_id:profiles (first_name),  
       departure_location_id:locations!posts_departure_location_id_fkey(location_name),
       destination_location_id:locations!posts_destination_location_id_fkey(location_name)
-    `)
+    `);
 
   if (error) {
-    console.log('Error: ', error)
+    console.log("Error: ", error);
     return null;
   }
 
-  const transformedData: PostType[] = data.map(post => {
+  const transformedData: PostType[] = data.map((post) => {
     return {
       id: post.id,
       fee: post.fee,
@@ -150,12 +159,12 @@ async function fetchPosts(searchParams: { departure: string, destination: string
       departure_time: post.departure_time,
       author_name: post.user_id.first_name,
       departure_name: post.departure_location_id.location_name,
-      destination_name: post.destination_location_id.location_name
+      destination_name: post.destination_location_id.location_name,
     };
   });
-  
-  console.log(JSON.stringify(transformedData, null, 2))
-  console.log(JSON.stringify(data, null, 2))
+
+  console.log(JSON.stringify(transformedData, null, 2));
+  console.log(JSON.stringify(data, null, 2));
 
   return transformedData;
 }
