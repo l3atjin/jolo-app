@@ -1,4 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -9,11 +8,10 @@ import {
   Pressable,
 } from "react-native";
 import Post from "../components/Post";
-import { SUPABASE_URL } from "@env";
-import { SUPABASE_ANON_KEY } from "@env";
 import { PostType } from "../types";
 import { StyleSheet } from "react-native";
 import { useUserType } from "../context/UserTypeProvider";
+import { supabase } from "../api/supabase";
 
 export default function SearchPage({ navigation }) {
   const [userType] = useUserType();
@@ -134,7 +132,6 @@ async function fetchPosts(searchParams: {
   destination: string;
   date: string;
 }): Promise<PostType[] | null> {
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const { data, error } = await supabase.from("posts").select(`
       id,
