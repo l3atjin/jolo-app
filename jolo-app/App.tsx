@@ -1,9 +1,9 @@
 import "react-native-gesture-handler";
 import "react-native-url-polyfill/auto";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "./src/api/supabase";
 import { Session } from "@supabase/supabase-js";
-import { NavigationContainer } from "@react-navigation/native";
+import { PaperProvider } from 'react-native-paper';
 import RootNavigator from "./src/navigations/RootNavigator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -21,8 +21,10 @@ export default function App() {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <RootNavigator />
-    </SafeAreaProvider>
+    <PaperProvider>
+      <SafeAreaProvider>
+        <RootNavigator />
+      </SafeAreaProvider>
+    </PaperProvider>
   );
 }
