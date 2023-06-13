@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../api/supabase'
 import { StyleSheet, View, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
-import { Session } from '@supabase/supabase-js'
+import { useAuth } from '../contexts/Auth'
 
-
-export default function Account({ session }: { session: Session }) {
+export default function Account() {
   const [loading, setLoading] = useState(true)
   const [firstName, setFirstName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const { user, session } = useAuth();
 
   useEffect(() => {
     if (session) getProfile()
@@ -33,6 +34,7 @@ export default function Account({ session }: { session: Session }) {
       if (data) {
         setFirstName(data.first_name)
         setAvatarUrl(data.avatar_url)
+        setPhoneNumber(data.phone_number)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -43,12 +45,10 @@ export default function Account({ session }: { session: Session }) {
     }
   }
 
-  async function updateProfile({
-    first_name,
-    avatar_url,
-  }: {
+  async function updateProfile({ first_name, avatar_url, phone_number }: {
     first_name: string
     avatar_url: string
+    phone_number: string
   }) {
     try {
       setLoading(true)
@@ -58,13 +58,12 @@ export default function Account({ session }: { session: Session }) {
         id: session?.user.id,
         first_name,
         avatar_url,
+        phone_number,
         updated_at: new Date(),
       }
 
-      console.log(updates)
-
       let { error } = await supabase.from('profiles').upsert(updates)
-
+      console.log(error)
       if (error) {
         throw error
       }
@@ -83,12 +82,17 @@ export default function Account({ session }: { session: Session }) {
         <Input label="First Name" value={firstName || ''} onChangeText={(text) => setFirstName(text)} />
       </View>
 
+      <View style={styles.verticallySpaced}>
+        <Input label="Phone Number" value={phoneNumber || ''} onChangeText={(text) => setFirstName(text)} />
+      </View>
+
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? 'Loading ...' : 'Update'}
           onPress={() => updateProfile({
             first_name: firstName,
-            avatar_url: avatarUrl
+            avatar_url: avatarUrl,
+            phone_number: phoneNumber,
           })}
           disabled={loading}
         />

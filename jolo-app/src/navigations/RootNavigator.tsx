@@ -7,7 +7,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LensPage from '../screens/LensPage';
 import MainNavigation from './MainNavigation';
 
-
 const Stack = createStackNavigator();
 
 console.log("In root navigator")

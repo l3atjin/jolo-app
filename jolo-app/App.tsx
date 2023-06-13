@@ -3,9 +3,9 @@ import 'react-native-url-polyfill/auto'
 import { useState, useEffect } from 'react'
 import { supabase } from './src/api/supabase'
 import { Session } from '@supabase/supabase-js'
-import { NavigationContainer } from '@react-navigation/native'
 import RootNavigator from './src/navigations/RootNavigator'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { AuthProvider } from './src/contexts/Auth';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -22,7 +22,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <RootNavigator/>
+      <AuthProvider>
+        <RootNavigator/>
+      </AuthProvider>
     </SafeAreaProvider>
     
   )
