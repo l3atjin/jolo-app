@@ -132,7 +132,6 @@ async function fetchPosts(searchParams: {
   destination: string;
   date: string;
 }): Promise<PostType[] | null> {
-
   const { data, error } = await supabase.from("posts").select(`
       id,
       fee,

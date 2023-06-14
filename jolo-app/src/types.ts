@@ -9,9 +9,9 @@ export interface PostType {
 }
 
 export interface RequestType {
-  departure: string,
-  destination: string,
-  date: string,
-  timeOfDate: string,
-  description: string
+  departure: string;
+  destination: string;
+  date: string;
+  timeOfDate: string;
+  description: string;
 }

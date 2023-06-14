@@ -1,11 +1,11 @@
-import { Box, Heading, Input } from 'native-base';
-import React, { useState } from 'react'
-import { insertPost } from '../utils/requests';
-import PostForm from './PostForm';
+import { Box, Heading, Input } from "native-base";
+import React, { useState } from "react";
+import { insertPost } from "../utils/requests";
+import PostForm from "./PostForm";
 
 export default function DriverForm() {
-  const [availableSeats, setAvailableSeats] = useState('');
-  const [fee, setFee] = useState('');
+  const [availableSeats, setAvailableSeats] = useState("");
+  const [fee, setFee] = useState("");
 
   const handleSubmit = (data) => {
     // Handle submission specifically for Driver
@@ -13,7 +13,6 @@ export default function DriverForm() {
     data.fee = fee;
     insertPost(data);
   };
-
 
   return (
     <Box mt="20">
@@ -29,8 +28,9 @@ export default function DriverForm() {
           variant="rounded"
           placeholder="Хэдээр явах вэ?"
           value={fee}
-          onChangeText={setFee}/>
+          onChangeText={setFee}
+        />
       </PostForm>
     </Box>
-  )
+  );
 }
