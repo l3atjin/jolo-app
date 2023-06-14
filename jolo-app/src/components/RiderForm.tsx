@@ -13,7 +13,7 @@ export default function RiderForm() {
   return (
     <Box mt="20">
       <Heading>Унаа хайж байна уу?</Heading>
-      <PostForm onSubmit={handleSubmit}></PostForm>
+      <PostForm onSubmit={handleSubmit} children={<></>}></PostForm>
     </Box>
   );
 }
