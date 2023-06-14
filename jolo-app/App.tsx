@@ -3,9 +3,9 @@ import "react-native-url-polyfill/auto";
 import React, { useState, useEffect } from "react";
 import { supabase } from "./src/api/supabase";
 import { Session } from "@supabase/supabase-js";
-import { PaperProvider } from 'react-native-paper';
 import RootNavigator from "./src/navigations/RootNavigator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NativeBaseProvider } from "native-base";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -21,10 +21,10 @@ export default function App() {
   }, []);
 
   return (
-    <PaperProvider>
+    <NativeBaseProvider>
       <SafeAreaProvider>
         <RootNavigator />
       </SafeAreaProvider>
-    </PaperProvider>
+    </NativeBaseProvider>
   );
 }

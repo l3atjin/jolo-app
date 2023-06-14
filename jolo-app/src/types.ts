@@ -7,3 +7,11 @@ export interface PostType {
   departure_name: string;
   destination_name: string;
 }
+
+export interface RequestType {
+  departure: string,
+  destination: string,
+  date: string,
+  timeOfDate: string,
+  description: string
+}
