@@ -1,10 +1,24 @@
+import { Box, Button, Heading } from "native-base";
 import React from "react";
-import { View, Text } from "react-native";
+import { useUserType } from "../context/UserTypeProvider";
 
 export default function ProfilePage() {
+  const [userType, setUserType] = useUserType();
+  const handleClick = () => {
+    if (userType === "rider") {
+      setUserType("driver");
+    } else {
+      setUserType("rider");
+    }
+    
+  };
+
   return (
-    <View>
-      <Text>Car go vroom</Text>
-    </View>
+    <Box mt="30">
+      <Heading>Таны профайл</Heading>
+      <Button onPress={handleClick}>
+        Солих
+      </Button>
+    </Box>
   );
 }
