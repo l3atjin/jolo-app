@@ -10,11 +10,11 @@ import {
 } from "native-base";
 
 export default function PostForm({ onSubmit, children }) {
-  const [departure, setDeparture] = useState("");
-  const [destination, setDestination] = useState("");
-  const [date, setDate] = useState("");
-  const [timeOfDay, setTimeOfDay] = useState("morning");
-  const [description, setDescription] = useState("");
+  const [departure, setDeparture] = useState("Дархан");
+  const [destination, setDestination] = useState("Улаанбаатар");
+  const [date, setDate] = useState("Маргааш");
+  const [timeOfDay, setTimeOfDay] = useState("Өглөө");
+  const [description, setDescription] = useState("явна явна");
 
   const timeOfDayOptions = ["Өглөө", "Өдөр", "Орой", "Хамаагүй"];
 
