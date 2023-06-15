@@ -71,7 +71,7 @@ export async function insertPost(params: PostType) {
     const newData =  { 
       departure_location_id: departureId,
       destination_location_id: destinationId,
-      available_seats: params.available_seats,
+      available_seats: params.availableSeats,
       fee: params.fee
     }
     insertIntoTable("posts", newData, user.id);
@@ -84,13 +84,20 @@ export async function insertPost(params: PostType) {
 }
 
 export async function fetchData(
-  searchParams: { departure: string; destination: string; date: string },
-  userType: UserType
+  userType: UserType,
+  searchParams?: {
+    departure?: string;
+    destination?: string;
+    date?: string;
+    timeOfDay?: string;
+    availableSeats?: number;
+    sortBy?: "date" | "availableSeats";
+  },
 ): Promise<PostType[] | RequestType[] | null> {
   const table = userType === "rider" ? "posts" : "requests";
   const additionalFields = userType === "rider" ? ", fee, available_seats" : "";
-  
-  const { data, error } = await supabase
+
+  let query = supabase
     .from(table)
     .select(`
       id,
@@ -100,6 +107,33 @@ export async function fetchData(
       destination_location_id:locations!${table}_destination_location_id_fkey(location_name)
       ${additionalFields}
     `);
+
+  if (searchParams) {
+    if (searchParams.departure) {
+      const departure_id = await getLocationId(searchParams.departure);
+      query = query.eq("departure_location_id", departure_id);
+    }
+    
+    if (searchParams.destination) {
+      const destination_id = await getLocationId(searchParams.destination);
+      query = query.eq("destination_location_id", destination_id);
+    }
+
+    // Add more conditions for other search parameters...
+    if (searchParams.date) {
+      query = query.eq("date", searchParams.date);
+    }
+    if (userType === "rider" && searchParams.availableSeats) {
+      query = query.gt("available_seats", searchParams.availableSeats);
+    }
+
+    // Sort the results if a sortBy option is provided...
+    if (searchParams.sortBy) {
+      query = query.order(searchParams.sortBy, { ascending: false });
+    }
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.log("Error: ", error);

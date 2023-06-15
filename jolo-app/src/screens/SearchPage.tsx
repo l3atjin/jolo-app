@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  Center,
+  Fab,
   FlatList,
   Heading,
+  Icon,
   Input,
   Spinner,
   VStack,
 } from "native-base";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
@@ -28,7 +32,7 @@ export default function SearchPage({ navigation }) {
   // Fetch posts on component mount
   useEffect(() => {
     async function fetchInitialData() {
-      const initialPosts = await fetchData(searchParams, userType);
+      const initialPosts = await fetchData(userType);
       setData(initialPosts);
       setIsLoading(false);
     }
@@ -39,7 +43,11 @@ export default function SearchPage({ navigation }) {
   console.log("User type is", userType);
 
   async function submitSearch() {
+    setIsLoading(true);
     alert("Pressed Search!");
+    const newData = await fetchData(userType, searchParams);
+    setData(newData);
+    setIsLoading(false);
   }
 
   const handleChange = (name: string, value: string) => {
