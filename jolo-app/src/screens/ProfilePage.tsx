@@ -14,7 +14,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <Box mt="30">
+    <Box mt="30" flex = {1}>
       <Heading>Таны профайл</Heading>
       <Button onPress={handleClick}>
         Солих

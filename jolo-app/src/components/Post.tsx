@@ -1,17 +1,25 @@
+import { Box, HStack, Spacer, Text } from "native-base";
 import React from "react";
-import { View, Text, Image } from "react-native";
-import { PostType } from "../types";
+import { PostType, RequestType } from "../types";
 
-const Post: React.FC<{ post: PostType }> = ({ post }) => {
+type PostProps = PostType | RequestType;
+
+const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   return (
-    <View>
-      <Text>{post.author_name}</Text>
-      <Text>{post.departure_name}</Text>
-      <Text>{post.destination_name}</Text>
-      <Text>{post.departure_time}</Text>
-      <Text>{post.available_seats}</Text>
-      <Text>{post.fee}</Text>
-    </View>
+    <Box bg="white" p="3" rounded="lg" my="2" shadow="2">
+      <HStack space={3} alignItems="center">
+        <Text fontWeight="bold" fontSize="md">
+          {post.authorName}
+        </Text>
+        <Text>
+          {post.departure} - {post.destination}
+        </Text>
+        <Spacer />
+        <Text>{post.timeOfDay}</Text>
+        {(post as PostType).availableSeats && <Text>{(post as PostType).availableSeats}</Text>}
+        {(post as PostType).fee && <Text>{(post as PostType).fee}</Text>}
+      </HStack>
+    </Box>
   );
 };
 

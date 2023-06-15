@@ -1,18 +1,18 @@
-export interface PostType {
-  id: any;
+export type PostType = BasePostType & {
+  availableSeats: string;
   fee: number;
-  available_seats: number;
-  departure: string;
-  destination: string;
-  date: string;
-  timeOfDate: string;
-  description: string;
 }
 
-export interface RequestType {
+export type BasePostType = {
+  id: any;
   departure: string;
   destination: string;
   date: string;
-  timeOfDate: string;
+  timeOfDay: string;
   description: string;
+  authorName: string;
 }
+
+export type RequestType = BasePostType;
+
+export type UserType = "rider" | "driver";
