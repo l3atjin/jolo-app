@@ -6,6 +6,7 @@ import { Session } from '@supabase/supabase-js'
 import RootNavigator from './src/navigations/RootNavigator'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AuthProvider } from './src/contexts/Auth';
+import { NativeBaseProvider } from 'native-base';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -21,11 +22,12 @@ export default function App() {
   }, [])
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <RootNavigator/>
-      </AuthProvider>
-    </SafeAreaProvider>
-    
+    <NativeBaseProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <RootNavigator/>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </NativeBaseProvider>
   )
 }
