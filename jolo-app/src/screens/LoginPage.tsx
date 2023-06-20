@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react'
 import LoginForm from '../components/LoginForm'
 import Account from '../components/Account'
 import { Pressable, View, Text } from 'react-native'
-import { useAuth } from '../contexts/Auth'
+import { useAuth } from '../context/Auth'
 
 export default function LoginPage( {navigation} ) {
   const { user, session } = useAuth();
 
   const onPressHandler = () => {
-    navigation.navigate('LensPage')
-  }
+    navigation.navigate("LensPage");
+  };
 
-  console.log("in Login Page")
+  console.log("in Login Page");
   return (
     <View>
       {session && user ? <Account key={user.id} /> : <LoginForm />}
@@ -19,5 +19,5 @@ export default function LoginPage( {navigation} ) {
         <Text>Go to Search Page</Text>
       </Pressable>
     </View>
-  )
+  );
 }

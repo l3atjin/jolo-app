@@ -1,7 +1,18 @@
-import React from 'react'
+import React from "react";
+import { View } from "react-native";
+import DriverForm from "../components/DriverForm";
+import RiderForm from "../components/RiderForm";
+import { useUserType } from "../context/UserTypeProvider";
 
-export default function CreatePostPage() {
+export default function CreatePostPage({ navigation }) {
+  const [userType] = useUserType();
+
+  console.log("in create post");
+  console.log("userType is", userType);
   return (
-    <div>CreatePostPage</div>
-  )
+    <View>
+      {userType === "rider" && <RiderForm />}
+      {userType === "driver" && <DriverForm />}
+    </View>
+  );
 }

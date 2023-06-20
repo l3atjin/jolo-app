@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../api/supabase";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { useAuth } from "../contexts/Auth";
+import { useAuth } from "../context/Auth";
 import AccountAvatar from "./AccountAvatar";
 import { decode } from "base64-arraybuffer";
 
