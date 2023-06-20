@@ -3,11 +3,11 @@ import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../api/supabase";
 import { Button, Input } from "react-native-elements";
 
-export default function Auth() {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
+export default function LoginForm() {
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  
   async function signInWithPhone() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({

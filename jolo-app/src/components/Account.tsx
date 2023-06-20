@@ -1,13 +1,20 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../api/supabase";
-import { StyleSheet, View, Alert } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input } from "react-native-elements";
-import { Session } from "@supabase/supabase-js";
+import { useAuth } from "../context/Auth";
+import AccountAvatar from "./AccountAvatar";
+import { decode } from "base64-arraybuffer";
 
-export default function Account({ session }: { session: Session }) {
+export default function Account() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUri, setAvatarUri] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [imageBase64, setImageBase64] = useState<string | null | undefined>(
+    null,
+  );
+  const { session } = useAuth();
 
   useEffect(() => {
     if (session) getProfile();
@@ -27,11 +34,10 @@ export default function Account({ session }: { session: Session }) {
         throw error;
       }
 
-      console.log(data);
-
       if (data) {
         setFirstName(data.first_name);
-        setAvatarUrl(data.avatar_url);
+        setAvatarUri(data.avatar_url);
+        setPhoneNumber(data.phone_number);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -42,25 +48,45 @@ export default function Account({ session }: { session: Session }) {
     }
   }
 
-  async function updateProfile({
-    first_name,
-    avatar_url,
-  }: {
-    first_name: string;
-    avatar_url: string;
-  }) {
+  // uploads a newly selected avatar
+  async function updateAvatar(): Promise<string | null> {
+    if (!imageBase64) return null;
+
+    const fileExt = "jpg";
+    const filePath = `${Math.random()}.${fileExt}`;
+    let { error } = await supabase.storage.from("avatars").upload(
+      filePath,
+      decode(imageBase64),
+      {
+        contentType: "image/jpg",
+      },
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    const { data } = supabase
+      .storage
+      .from("avatars")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl || null;
+  }
+
+  // save new updates to supabase
+  async function updateProfile() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-
+ 
       const updates = {
         id: session?.user.id,
-        first_name,
-        avatar_url,
+        first_name: firstName,
+        avatar_url: await updateAvatar() || avatarUri,
+        phone_number: phoneNumber,
         updated_at: new Date(),
       };
-
-      console.log(updates);
 
       let { error } = await supabase.from("profiles").upsert(updates);
 
@@ -78,6 +104,13 @@ export default function Account({ session }: { session: Session }) {
 
   return (
     <View style={styles.container}>
+      <AccountAvatar
+        avatarUri={avatarUri}
+        onUpload={(imageUri, imageBase64) => {
+          setImageBase64(imageBase64);
+          setAvatarUri(imageUri);
+        }}
+      />
       <View style={styles.verticallySpaced}>
         <Input
           label="First Name"
@@ -86,14 +119,19 @@ export default function Account({ session }: { session: Session }) {
         />
       </View>
 
+      <View style={styles.verticallySpaced}>
+        <Input
+          label="Phone Number"
+          value={phoneNumber || ""}
+          onChangeText={(text) => setFirstName(text)}
+        />
+      </View>
+
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
           title={loading ? "Loading ..." : "Update"}
           onPress={() =>
-            updateProfile({
-              first_name: firstName,
-              avatar_url: avatarUrl,
-            })
+            updateProfile()
           }
           disabled={loading}
         />
