@@ -3,6 +3,7 @@ import Account from '../components/Account';
 import { useAuth } from '../context/Auth'
 import { useUserType } from "../context/UserTypeProvider";
 import { Box, Button, Heading } from "native-base";
+import { View } from 'react-native';
 
 export default function ProfilePage() {
   const { session, user } = useAuth();
@@ -16,12 +17,9 @@ export default function ProfilePage() {
     
   };
   return (
-    <Box mt="30" flex = {1}>
+    <View>
       <Account key={user?.id}></Account>
-      <Heading>Таны профайл</Heading>
-      <Button onPress={handleClick}>
-        Солих
-      </Button>
-    </Box>
+      <Button onPress={handleClick}>SWITCH</Button>
+    </View>
   );
 }
