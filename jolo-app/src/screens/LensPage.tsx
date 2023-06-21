@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import { Box, Button, Center, Text } from "native-base";
 import { useUserType } from "../context/UserTypeProvider";
 
 export default function LensPage({ navigation }) {
@@ -16,34 +16,17 @@ export default function LensPage({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable style={styles.button} onPress={onPressRider}>
-        <Text style={styles.buttonText}>Зорчигч</Text>
-      </Pressable>
-      <Pressable style={styles.button} onPress={onPressDriver}>
-        <Text style={styles.buttonText}>Жолооч</Text>
-      </Pressable>
-    </View>
+    <Center flex={1}>
+      <Button mb={2} onPress={onPressRider} variant="solid" colorScheme="blue">
+        <Text color="white" bold>
+          Зорчигч
+        </Text>
+      </Button>
+      <Button onPress={onPressDriver} variant="solid" colorScheme="blue">
+        <Text color="white" bold>
+          Жолооч
+        </Text>
+      </Button>
+    </Center>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    marginBottom: 10,
-    padding: 10,
-    minWidth: 200,
-    backgroundColor: "#1e90ff",
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-});
