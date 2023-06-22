@@ -8,11 +8,12 @@ import {
   Select,
   VStack,
 } from "native-base";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function PostForm({ onSubmit, children }) {
   const [departure, setDeparture] = useState("Дархан");
   const [destination, setDestination] = useState("Улаанбаатар");
-  const [date, setDate] = useState("Маргааш");
+  const [date, setDate] = useState(new Date(1598051730000));
   const [timeOfDay, setTimeOfDay] = useState("Өглөө");
   const [description, setDescription] = useState("явна явна");
 
@@ -29,6 +30,11 @@ export default function PostForm({ onSubmit, children }) {
     onSubmit(requestData);
   };
 
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setDate(currentDate);
+  };
+
   return (
     <Box mt="5">
       <Input
@@ -43,12 +49,13 @@ export default function PostForm({ onSubmit, children }) {
         value={destination}
         onChangeText={setDestination}
       />
-      <Input
-        variant="rounded"
-        placeholder="Өдөр"
-        value={date}
-        onChangeText={setDate}
-      />
+      <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode="date"
+          is24Hour={true}
+          onChange={onDateChange}
+        />
       <Select
         selectedValue={timeOfDay}
         placeholder="Хэдэн цагаас?"

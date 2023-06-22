@@ -1,8 +1,13 @@
 import React from "react";
-import { Box, Button, Center, Text } from "native-base";
+import { Button, Center, Text } from "native-base";
 import { useUserType } from "../context/UserTypeProvider";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export default function LensPage({ navigation }) {
+type LensPageProp = {
+  navigation: StackNavigationProp<any>; // replace `any` with your Navigator param list if you have defined one
+};
+
+export default function LensPage({ navigation }: LensPageProp) {
   const [userType, setUserType] = useUserType();
 
   const onPressRider = () => {

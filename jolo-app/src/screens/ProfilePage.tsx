@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const [userType, setUserType] = useUserType();
   const handleClick = () => {
     if (userType === "rider") {
-      setUserType("driver");
+      setUserType?.("driver");
     } else {
       setUserType("rider");
     }

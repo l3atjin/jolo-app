@@ -50,7 +50,7 @@ export async function insertRequest(params: RequestType) {
 
     const newData =  { 
       departure_location_id: departureId,
-      destination_location_id: destinationId 
+      destination_location_id: destinationId
     }
     insertIntoTable("requests", newData, user.id);
 

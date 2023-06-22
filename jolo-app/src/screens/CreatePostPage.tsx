@@ -4,7 +4,7 @@ import DriverForm from "../components/DriverForm";
 import RiderForm from "../components/RiderForm";
 import { useUserType } from "../context/UserTypeProvider";
 
-export default function CreatePostPage({ navigation }) {
+export default function CreatePostPage({}) {
   const [userType] = useUserType();
 
   console.log("in create post");

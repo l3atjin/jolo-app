@@ -16,5 +16,10 @@ export const UserTypeProvider = ({ children }) => {
 
 // Create a custom hook to use the UserTypeContext, this is optional but it simplifies the usage
 export const useUserType = () => {
-  return useContext(UserTypeContext);
+  const contextValue = useContext(UserTypeContext);
+
+  if (!contextValue) {
+    return [null, null]
+  }
+  return contextValue;
 };
