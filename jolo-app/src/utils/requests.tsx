@@ -88,7 +88,7 @@ export async function fetchData(
   searchParams?: {
     departure?: string;
     destination?: string;
-    date?: string;
+    date?: Date;
     timeOfDay?: string;
     availableSeats?: number;
     sortBy?: "date" | "availableSeats";
