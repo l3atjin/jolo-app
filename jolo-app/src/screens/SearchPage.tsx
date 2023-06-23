@@ -36,7 +36,6 @@ export default function SearchPage({ navigation }) {
       setData(initialPosts);
       setIsLoading(false);
     }
-
     fetchInitialData();
   }, []);
 
