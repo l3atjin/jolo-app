@@ -1,6 +1,6 @@
 import React from 'react'
 import Account from '../components/Account';
-import { useAuth } from '../context/Auth'
+import { useAuth } from '../context/AuthProvider'
 import { useUserType } from "../context/UserTypeProvider";
 import { Box, Button, Heading } from "native-base";
 import { View } from 'react-native';

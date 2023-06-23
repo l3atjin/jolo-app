@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LensPage from "../screens/LensPage";
 import MainNavigation from "./MainNavigation";
 import { UserTypeProvider } from "../context/UserTypeProvider";
-import { AuthProvider } from "../context/Auth";
+import { AuthProvider } from "../context/AuthProvider";
 
 const Stack = createStackNavigator();
 

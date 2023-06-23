@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../api/supabase";
-import { useAuth } from "../context/Auth";
+import { useAuth } from "../context/AuthProvider";
 import AccountAvatar from "./AccountAvatar";
 import { Alert } from "react-native";
 import { decode } from "base64-arraybuffer";
