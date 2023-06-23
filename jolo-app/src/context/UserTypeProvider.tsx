@@ -7,12 +7,13 @@ import React, {
   useContext,
   useState,
 } from "react";
+import { UserType } from "../types";
 
-let UserTypeContext: Context<[string, Dispatch<SetStateAction<string>>]>;
+let UserTypeContext: Context<[UserType, Dispatch<SetStateAction<UserType>>]>;
 
 // Define a provider component
 export const UserTypeProvider = ({ children }: { children: ReactNode }) => {
-  const [userType, setUserType] = useState("rider"); // Initial state
+  const [userType, setUserType] = useState("rider" as UserType); // Initial state
 
   // Define your context
   UserTypeContext = createContext([userType, setUserType]);
