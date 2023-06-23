@@ -1,11 +1,21 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  Context,
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 
-// Define your context
-const UserTypeContext = createContext(null);
+let UserTypeContext: Context<[string, Dispatch<SetStateAction<string>>]>;
 
 // Define a provider component
-export const UserTypeProvider = ({ children }) => {
+export const UserTypeProvider = ({ children }: { children: ReactNode }) => {
   const [userType, setUserType] = useState("rider"); // Initial state
+
+  // Define your context
+  UserTypeContext = createContext([userType, setUserType]);
 
   return (
     <UserTypeContext.Provider value={[userType, setUserType]}>
@@ -17,9 +27,5 @@ export const UserTypeProvider = ({ children }) => {
 // Create a custom hook to use the UserTypeContext, this is optional but it simplifies the usage
 export const useUserType = () => {
   const contextValue = useContext(UserTypeContext);
-
-  if (!contextValue) {
-    return [null, null]
-  }
   return contextValue;
 };
