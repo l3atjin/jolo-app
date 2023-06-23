@@ -4,7 +4,7 @@ import Account from '../components/Account'
 import { useAuth } from '../context/AuthProvider'
 import { Center } from 'native-base'
 
-export default function LoginPage( {navigation} ) {
+export default function LoginPage() {
   const { user, session } = useAuth();
 
   return (

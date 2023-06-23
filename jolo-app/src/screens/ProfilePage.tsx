@@ -18,7 +18,7 @@ export default function ProfilePage() {
   };
   return (
     <View>
-      <Account key={user?.id}></Account>
+      <Account/>
       <Button onPress={handleClick}>SWITCH</Button>
     </View>
   );
