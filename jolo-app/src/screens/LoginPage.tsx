@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import LoginForm from '../components/LoginForm'
 import Account from '../components/Account'
-import { Pressable, View, Text } from 'react-native'
 import { useAuth } from '../context/Auth'
+import { Center } from 'native-base'
 
 export default function LoginPage( {navigation} ) {
   const { user, session } = useAuth();
 
-  const onPressHandler = () => {
-    navigation.navigate("LensPage");
-  };
-
-  console.log("in Login Page");
   return (
-    <View>
-      {session && user ? <Account key={user.id} /> : <LoginForm />}
-      <Pressable onPress={onPressHandler}>
-        <Text>Go to Search Page</Text>
-      </Pressable>
-    </View>
+    <Center flex={1}>
+      {session && user ? <Account /> : <LoginForm />}
+    </Center>
   );
 }

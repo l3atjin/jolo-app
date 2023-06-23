@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../api/supabase";
-import { Alert, StyleSheet, View } from "react-native";
-import { Button, Input } from "react-native-elements";
 import { useAuth } from "../context/Auth";
 import AccountAvatar from "./AccountAvatar";
+import { Alert } from "react-native";
 import { decode } from "base64-arraybuffer";
+import { Button, FormControl, Input, VStack } from "native-base";
 
 export default function Account() {
-  const [loading, setLoading] = useState(true);
-  const [firstName, setFirstName] = useState("");
-  const [avatarUri, setAvatarUri] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [firstName, setFirstName] = useState<string>("");
+  const [avatarUri, setAvatarUri] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [imageBase64, setImageBase64] = useState<string | null | undefined>(
     null,
   );
@@ -79,7 +79,7 @@ export default function Account() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
- 
+
       const updates = {
         id: session?.user.id,
         first_name: firstName,
@@ -103,7 +103,7 @@ export default function Account() {
   }
 
   return (
-    <View style={styles.container}>
+    <VStack width="70%" mx="auto">
       <AccountAvatar
         avatarUri={avatarUri}
         onUpload={(imageUri, imageBase64) => {
@@ -111,50 +111,39 @@ export default function Account() {
           setAvatarUri(imageUri);
         }}
       />
-      <View style={styles.verticallySpaced}>
+      <FormControl>
+        <FormControl.Label _text={{ bold: true }}>
+          Таны Нэр
+        </FormControl.Label>
         <Input
-          label="First Name"
+          onChangeText={(value) => setFirstName(value)}
           value={firstName || ""}
-          onChangeText={(text) => setFirstName(text)}
         />
-      </View>
-
-      <View style={styles.verticallySpaced}>
+      </FormControl>
+      <FormControl>
+        <FormControl.Label _text={{ bold: true }}>
+          Утасны дугаар
+        </FormControl.Label>
         <Input
-          label="Phone Number"
+          onChangeText={(value) => setPhoneNumber(value)}
           value={phoneNumber || ""}
-          onChangeText={(text) => setFirstName(text)}
         />
-      </View>
-
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title={loading ? "Loading ..." : "Update"}
-          onPress={() =>
-            updateProfile()
-          }
-          disabled={loading}
-        />
-      </View>
-
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
-    </View>
+      </FormControl>
+      <Button
+        onPress={updateProfile}
+        mt="5"
+        disabled={loading}
+        colorScheme="primary"
+      >
+        {loading ? "Уншиж байна" : "Шинэчлэх"}
+      </Button>
+      <Button
+        onPress={() => supabase.auth.signOut()}
+        mt="2"
+        colorScheme="primary"
+      >
+        Гарах
+      </Button>
+    </VStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: "stretch",
-  },
-  mt20: {
-    marginTop: 20,
-  },
-});
