@@ -120,9 +120,9 @@ export async function fetchData(
     }
 
     // Add more conditions for other search parameters...
-    if (searchParams.date) {
-      query = query.eq("date", searchParams.date);
-    }
+    // if (searchParams.date) {
+    //   query = query.eq("date", searchParams.date);
+    // }
     if (userType === "rider" && searchParams.availableSeats) {
       query = query.gt("available_seats", searchParams.availableSeats);
     }

@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Center,
-  Fab,
+  Text,
   FlatList,
   Heading,
-  Icon,
-  Input,
+  Modal,
   Spinner,
   VStack,
 } from "native-base";
@@ -19,10 +17,11 @@ import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
 
 
-export default function SearchPage({ navigation }) {
+export default function SearchPage({ }) {
   const [userType] = useUserType();
   const [data, setData] = useState<PostType[] | RequestType[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   // Fetch posts on component mount
   useEffect(() => {
@@ -44,6 +43,14 @@ export default function SearchPage({ navigation }) {
     setIsLoading(false);
   }
 
+  const handlePostClick = (post) => {
+    setSelectedPost(post);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPost(null);
+  };
+
   return (
     <Box p="5" bg="#F5F5F5" flex={1}>
       <VStack space={3}>
@@ -55,10 +62,27 @@ export default function SearchPage({ navigation }) {
         ) : (
           <FlatList
             data={data}
-            renderItem={({ item }) => <Post post={item} />}
+            renderItem={({ item }) => <Post post={item} onClick={() => handlePostClick(item) }/>}
             keyExtractor={(item) => item.id.toString()}
           />
         )}
+        <Modal isOpen={selectedPost !== null} onClose={handleCloseModal}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Мэдээлэл</Modal.Header>
+            <Modal.Body>
+              {/* Display your post details here */}
+              <Text>Departure: {selectedPost?.departure}</Text>
+              <Text>Destination: {selectedPost?.destination}</Text>
+              { selectedPost?.availableSeats && <Text>Available seats: {selectedPost?.availableSeats}</Text> }
+              { selectedPost?.fee && <Text>Fee: {selectedPost?.fee}</Text>}
+              {/* Add more details... */}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onPress={handleCloseModal}>Close</Button>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
       </VStack>
     </Box>
   );

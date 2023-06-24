@@ -3,11 +3,7 @@ import React, { useState } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { SearchFormProps } from '../screens/types';
 
-export default function SearchForm( onSearchSubmit: SearchFormProps ) {
-  const [departure, setDeparture] = useState("");
-  const [destination, setDestination] = useState("");
-  const [date, setDate] = useState(new Date());
-
+export default function SearchForm( {onSearchSubmit}: SearchFormProps ) {
   const [searchParams, setSearchParams] = useState({
     departure: "",
     destination: "",
@@ -30,18 +26,18 @@ export default function SearchForm( onSearchSubmit: SearchFormProps ) {
       <Input
           variant="outline"
           placeholder="Хаанаас"
-          value={departure}
+          value={searchParams.departure}
           onChangeText={(text) => handleChange('departure', text)}
         />
         <Input
           variant="outline"
           placeholder="Хаашаа"
-          value={destination}
+          value={searchParams.destination}
           onChangeText={(text) => handleChange('destination', text)}
         />
         <DateTimePicker
           testID="dateTimePicker"
-          value={date}
+          value={searchParams.date}
           mode="date"
           onChange={(event, selectedDate) => handleChange('date', selectedDate)}
         />
