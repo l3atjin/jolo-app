@@ -2,32 +2,27 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Center,
-  Fab,
+  Text,
   FlatList,
   Heading,
-  Icon,
-  Input,
+  Modal,
   Spinner,
   VStack,
 } from "native-base";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
 import { fetchData } from "../utils/requests";
+import SearchForm from "../components/SearchForm";
+import { SearchParams } from "./types";
 
-export default function SearchPage({ navigation }) {
+
+export default function SearchPage({ }) {
   const [userType] = useUserType();
-  const [searchParams, setSearchParams] = useState({
-    departure: "",
-    destination: "",
-    date: "",
-    //...add more search parameters as needed
-  });
-
   const [data, setData] = useState<PostType[] | RequestType[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<PostType | RequestType | null>(null);
+
 
   // Fetch posts on component mount
   useEffect(() => {
@@ -36,13 +31,12 @@ export default function SearchPage({ navigation }) {
       setData(initialPosts);
       setIsLoading(false);
     }
-
     fetchInitialData();
   }, []);
 
   console.log("User type is", userType);
 
-  async function submitSearch() {
+  async function submitSearch(searchParams: SearchParams) {
     setIsLoading(true);
     alert("Pressed Search!");
     const newData = await fetchData(userType, searchParams);
@@ -50,48 +44,48 @@ export default function SearchPage({ navigation }) {
     setIsLoading(false);
   }
 
-  const handleChange = (name: string, value: string) => {
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [name]: value,
-    }));
+  const handlePostClick = (post: any) => {
+    setSelectedPost(post);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPost(null);
   };
 
   return (
     <Box p="5" bg="#F5F5F5" flex={1}>
       <VStack space={3}>
         <Heading>Хаа хүрэх гэж байна?</Heading>
-        <Input
-          variant="outline"
-          placeholder="Хаанаас"
-          value={searchParams.departure}
-          onChangeText={(text) => handleChange("departure", text)}
-        />
-        <Input
-          variant="outline"
-          placeholder="Хаашаа"
-          value={searchParams.destination}
-          onChangeText={(text) => handleChange("destination", text)}
-        />
-        <Input
-          variant="outline"
-          placeholder="Өдөр"
-          value={searchParams.date}
-          onChangeText={(text) => handleChange("date", text)}
-        />
-        <Button onPress={submitSearch}>
-          Хайх
-        </Button>
+        <SearchForm onSearchSubmit={submitSearch}/>
 
         {isLoading ? (
           <Spinner />
         ) : (
           <FlatList
             data={data}
-            renderItem={({ item }) => <Post post={item} />}
+            renderItem={({ item }) => <Post post={item} onClick={() => handlePostClick(item) }/>}
             keyExtractor={(item) => item.id.toString()}
           />
         )}
+        <Modal isOpen={selectedPost !== null} onClose={handleCloseModal}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header>Мэдээлэл</Modal.Header>
+            <Modal.Body>
+              {/* Display your post details here */}
+              <Text>Departure: {selectedPost?.departure}</Text>
+              <Text>Destination: {selectedPost?.destination}</Text>
+              <Text>Date: {selectedPost?.date}</Text>
+              <Text>Time of day: {selectedPost?.timeOfDay}</Text>
+              { selectedPost?.availableSeats && <Text>Available seats: {selectedPost?.availableSeats}</Text> }
+              { selectedPost?.fee && <Text>Fee: {selectedPost?.fee}</Text>}
+              {/* Add more details... */}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button onPress={handleCloseModal}>Close</Button>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
       </VStack>
     </Box>
   );

@@ -1,25 +1,32 @@
 import { Box, HStack, Spacer, Text } from "native-base";
 import React from "react";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { PostType, RequestType } from "../types";
 
-type PostProps = PostType | RequestType;
+interface PostComponentProps {
+  post: PostType | RequestType;
+  onClick: (post: PostType | RequestType) => void;
+}
 
-const Post: React.FC<{ post: PostProps }> = ({ post }) => {
+const Post: React.FC<PostComponentProps> = ({ post, onClick }) => {
   return (
-    <Box bg="white" p="3" rounded="lg" my="2" shadow="2">
-      <HStack space={3} alignItems="center">
-        <Text fontWeight="bold" fontSize="md">
-          {post.authorName}
-        </Text>
-        <Text>
-          {post.departure} - {post.destination}
-        </Text>
-        <Spacer />
-        <Text>{post.timeOfDay}</Text>
-        {(post as PostType).availableSeats && <Text>{(post as PostType).availableSeats}</Text>}
-        {(post as PostType).fee && <Text>{(post as PostType).fee}</Text>}
-      </HStack>
-    </Box>
+    <TouchableOpacity onPress={() => {onClick(post)}}>
+      <Box bg="white" p="3" rounded="lg" my="2" shadow="2">
+        <HStack space={3} alignItems="center">
+          <Text fontWeight="bold" fontSize="md">
+            {post.authorName}
+          </Text>
+          <Text>
+            {post.departure} - {post.destination}
+          </Text>
+          <Spacer />
+          <Text>{post.date}</Text>
+          {(post as PostType).availableSeats && <Text>{(post as PostType).availableSeats}</Text>}
+          {(post as PostType).fee && <Text>{(post as PostType).fee}</Text>}
+        </HStack>
+      </Box>
+    </TouchableOpacity>
+   
   );
 };
 

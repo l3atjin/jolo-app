@@ -48,9 +48,17 @@ export async function insertRequest(params: RequestType) {
     const departureId = await getLocationId(params.departure);
     const destinationId = await getLocationId(params.destination);
 
+    const time = params.exactTime.toLocaleTimeString();
+    console.log("Time is", params.exactTime.toTimeString().split(' ')[0])
+    console.log("Type is", time)
+
     const newData =  { 
       departure_location_id: departureId,
-      destination_location_id: destinationId
+      destination_location_id: destinationId,
+      description: params.description,
+      ...(params.timeOfDay !== "Цаг оруулах" && { time_of_day: params.timeOfDay }),
+      departure_day: params.date,
+      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime.toTimeString().split(' ')[0] })
     }
     insertIntoTable("requests", newData, user.id);
 
@@ -72,7 +80,11 @@ export async function insertPost(params: PostType) {
       departure_location_id: departureId,
       destination_location_id: destinationId,
       available_seats: params.availableSeats,
-      fee: params.fee
+      fee: params.fee,
+      description: params.description,
+      time_of_day: params.timeOfDay,
+      departure_day: params.date,
+      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime })
     }
     insertIntoTable("posts", newData, user.id);
 
@@ -88,12 +100,12 @@ export async function fetchData(
   searchParams?: {
     departure?: string;
     destination?: string;
-    date?: string;
+    date?: Date;
     timeOfDay?: string;
     availableSeats?: number;
     sortBy?: "date" | "availableSeats";
   },
-): Promise<PostType[] | RequestType[] | null> {
+): Promise<any> {
   const table = userType === "rider" ? "posts" : "requests";
   const additionalFields = userType === "rider" ? ", fee, available_seats" : "";
 
@@ -104,7 +116,10 @@ export async function fetchData(
       departure_time,
       user_id:profiles (first_name),
       departure_location_id:locations!${table}_departure_location_id_fkey(location_name),
-      destination_location_id:locations!${table}_destination_location_id_fkey(location_name)
+      destination_location_id:locations!${table}_destination_location_id_fkey(location_name),
+      departure_day,
+      time_of_day,
+      description
       ${additionalFields}
     `);
 
@@ -120,9 +135,9 @@ export async function fetchData(
     }
 
     // Add more conditions for other search parameters...
-    if (searchParams.date) {
-      query = query.eq("date", searchParams.date);
-    }
+    // if (searchParams.date) {
+    //   query = query.eq("date", searchParams.date);
+    // }
     if (userType === "rider" && searchParams.availableSeats) {
       query = query.gt("available_seats", searchParams.availableSeats);
     }
@@ -143,10 +158,13 @@ export async function fetchData(
   const transformedData = data.map((post: any) => {
     const baseData = {
       id: post.id,
-      departure_time: post.departure_time,
+      exactTime: post.departure_time,
       authorName: post.user_id.first_name,
       departure: post.departure_location_id.location_name,
       destination: post.destination_location_id.location_name,
+      description: post.description,
+      date: post.departure_day,
+      timeOfDay: post.time_of_day
     };
 
     if (userType === "rider") {
