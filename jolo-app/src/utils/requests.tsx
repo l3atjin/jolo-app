@@ -48,9 +48,17 @@ export async function insertRequest(params: RequestType) {
     const departureId = await getLocationId(params.departure);
     const destinationId = await getLocationId(params.destination);
 
+    const time = params.exactTime.toLocaleTimeString();
+    console.log("Time is", params.exactTime.toTimeString().split(' ')[0])
+    console.log("Type is", time)
+
     const newData =  { 
       departure_location_id: departureId,
-      destination_location_id: destinationId 
+      destination_location_id: destinationId,
+      description: params.description,
+      ...(params.timeOfDay !== "Цаг оруулах" && { time_of_day: params.timeOfDay }),
+      departure_day: params.date,
+      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime.toTimeString().split(' ')[0] })
     }
     insertIntoTable("requests", newData, user.id);
 
@@ -72,7 +80,11 @@ export async function insertPost(params: PostType) {
       departure_location_id: departureId,
       destination_location_id: destinationId,
       available_seats: params.availableSeats,
-      fee: params.fee
+      fee: params.fee,
+      description: params.description,
+      time_of_day: params.timeOfDay,
+      departure_day: params.date,
+      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime })
     }
     insertIntoTable("posts", newData, user.id);
 
@@ -93,7 +105,7 @@ export async function fetchData(
     availableSeats?: number;
     sortBy?: "date" | "availableSeats";
   },
-): Promise<PostType[] | RequestType[] | null> {
+): Promise<any> {
   const table = userType === "rider" ? "posts" : "requests";
   const additionalFields = userType === "rider" ? ", fee, available_seats" : "";
 

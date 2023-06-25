@@ -1,14 +1,15 @@
 export type PostType = BasePostType & {
   availableSeats: string;
-  fee: number;
+  fee: string;
 }
 
 export type BasePostType = {
   id: any;
   departure: string;
   destination: string;
-  date: string;
+  date: Date;
   timeOfDay: string;
+  exactTime: string;
   description: string;
   authorName: string;
 }

@@ -1,5 +1,6 @@
 import { Box, Heading, Input } from "native-base";
 import React, { useState } from "react";
+import { PostType } from "../types";
 import { insertPost } from "../utils/requests";
 import PostForm from "./PostForm";
 
@@ -7,7 +8,7 @@ export default function DriverForm() {
   const [availableSeats, setAvailableSeats] = useState("");
   const [fee, setFee] = useState("");
 
-  const handleSubmit = (data) => {
+  const handleSubmit = (data: PostType) => {
     // Handle submission specifically for Driver
     data.availableSeats = availableSeats;
     data.fee = fee;
