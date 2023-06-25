@@ -73,12 +73,13 @@ export default function SearchPage({ }) {
             <Modal.Header>Мэдээлэл</Modal.Header>
             <Modal.Body>
               {/* Display your post details here */}
-              <Text>Departure: {selectedPost?.departure}</Text>
-              <Text>Destination: {selectedPost?.destination}</Text>
-              <Text>Date: {selectedPost?.date}</Text>
-              <Text>Time of day: {selectedPost?.timeOfDay}</Text>
-              { selectedPost?.availableSeats && <Text>Available seats: {selectedPost?.availableSeats}</Text> }
-              { selectedPost?.fee && <Text>Fee: {selectedPost?.fee}</Text>}
+              <Text>{userType === "driver" ? "Жолоочийн нэр" : "Зорчигчийн нэр"}: {selectedPost?.authorName}</Text>
+              <Text>Хаанаас: {selectedPost?.departure}</Text>
+              <Text>Хаашаа: {selectedPost?.destination}</Text>
+              <Text>Өдөр: {selectedPost?.date}</Text>
+              <Text>Хэзээ: {selectedPost?.timeOfDay}</Text>
+              { selectedPost?.availableSeats && <Text>Суудлын тоо: {selectedPost?.availableSeats}</Text> }
+              { selectedPost?.fee && <Text>Төлбөр: {selectedPost?.fee}</Text>}
               {/* Add more details... */}
             </Modal.Body>
             <Modal.Footer>
