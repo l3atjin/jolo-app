@@ -21,7 +21,8 @@ export default function SearchPage({ }) {
   const [userType] = useUserType();
   const [data, setData] = useState<PostType[] | RequestType[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedPost, setSelectedPost] = useState<PostType | RequestType | null>(null);
+
 
   // Fetch posts on component mount
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function SearchPage({ }) {
     setIsLoading(false);
   }
 
-  const handlePostClick = (post) => {
+  const handlePostClick = (post: any) => {
     setSelectedPost(post);
   };
 
