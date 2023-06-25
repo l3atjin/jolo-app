@@ -20,7 +20,7 @@ const Post: React.FC<PostComponentProps> = ({ post, onClick }) => {
             {post.departure} - {post.destination}
           </Text>
           <Spacer />
-          <Text>{post.timeOfDay}</Text>
+          <Text>{post.date}</Text>
           {(post as PostType).availableSeats && <Text>{(post as PostType).availableSeats}</Text>}
           {(post as PostType).fee && <Text>{(post as PostType).fee}</Text>}
         </HStack>

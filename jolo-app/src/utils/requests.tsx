@@ -116,7 +116,10 @@ export async function fetchData(
       departure_time,
       user_id:profiles (first_name),
       departure_location_id:locations!${table}_departure_location_id_fkey(location_name),
-      destination_location_id:locations!${table}_destination_location_id_fkey(location_name)
+      destination_location_id:locations!${table}_destination_location_id_fkey(location_name),
+      departure_day,
+      time_of_day,
+      description
       ${additionalFields}
     `);
 
@@ -155,10 +158,13 @@ export async function fetchData(
   const transformedData = data.map((post: any) => {
     const baseData = {
       id: post.id,
-      departure_time: post.departure_time,
+      exactTime: post.departure_time,
       authorName: post.user_id.first_name,
       departure: post.departure_location_id.location_name,
       destination: post.destination_location_id.location_name,
+      description: post.description,
+      date: post.departure_day,
+      timeOfDay: post.time_of_day
     };
 
     if (userType === "rider") {

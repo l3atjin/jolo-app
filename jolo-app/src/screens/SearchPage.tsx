@@ -74,6 +74,8 @@ export default function SearchPage({ }) {
               {/* Display your post details here */}
               <Text>Departure: {selectedPost?.departure}</Text>
               <Text>Destination: {selectedPost?.destination}</Text>
+              <Text>Date: {selectedPost?.date}</Text>
+              <Text>Time of day: {selectedPost?.timeOfDay}</Text>
               { selectedPost?.availableSeats && <Text>Available seats: {selectedPost?.availableSeats}</Text> }
               { selectedPost?.fee && <Text>Fee: {selectedPost?.fee}</Text>}
               {/* Add more details... */}
