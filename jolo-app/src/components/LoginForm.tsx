@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Alert } from "react-native";
 import { supabase } from "../api/supabase";
 import { Button, FormControl, Input, Stack } from "native-base";
 import OTPForm from "./OTPForm";
+import { TextInput } from "react-native-gesture-handler";
 
 export default function LoginForm() {
   const [phone, setPhone] = useState("");
@@ -10,7 +11,12 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [awaitingOTP, setAwaitingOTP] = useState(false);
 
+  let phoneNumberRef = useRef<TextInput>();
+  let passwordRef = useRef<TextInput>();
+
   async function signInWithPhone() {
+    phoneNumberRef.current?.blur();
+    passwordRef.current?.blur();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       phone,
@@ -21,6 +27,8 @@ export default function LoginForm() {
   }
 
   async function signUpWithPhone() {
+    phoneNumberRef.current?.blur();
+    passwordRef.current?.blur();
     setAwaitingOTP(true);
   }
 
@@ -46,6 +54,7 @@ export default function LoginForm() {
           Утасны дугаар
         </FormControl.Label>
         <Input
+          ref={phoneNumberRef}
           onChangeText={(value) => setPhone(value)}
           keyboardType="numeric"
         />
@@ -55,6 +64,7 @@ export default function LoginForm() {
           Нууц Үг
         </FormControl.Label>
         <Input
+          ref={passwordRef}
           type="password"
           onChangeText={(value) => setPassword(value)}
         />
