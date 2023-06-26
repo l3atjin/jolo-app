@@ -8,8 +8,8 @@ export default function LoginPage() {
   const { user, session } = useAuth();
 
   return (
-    <Center flex={1}>
+    <>
       {session && user ? <Account /> : <LoginForm />}
-    </Center>
+    </>
   );
 }
