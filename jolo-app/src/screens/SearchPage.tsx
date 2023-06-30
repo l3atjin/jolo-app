@@ -8,11 +8,12 @@ import {
   Modal,
   Spinner,
   VStack,
+  Input,
 } from "native-base";
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
-import { fetchData } from "../utils/requests";
+import { fetchData, fetchUserPosts, insertBooking } from "../utils/requests";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
 
@@ -22,6 +23,7 @@ export default function SearchPage({ }) {
   const [data, setData] = useState<PostType[] | RequestType[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<PostType | RequestType | null>(null);
+  const [rideDetails, setRideDetails] = useState("");
 
 
   // Fetch posts on component mount
@@ -52,6 +54,24 @@ export default function SearchPage({ }) {
     setSelectedPost(null);
   };
 
+  const submitRequest = () => {
+    console.log("Clicked book");
+    // insert a new booking with pending status
+    insertBooking(selectedPost, rideDetails, userType);
+
+  };
+
+  const submitInvite = async () => {
+    console.log("Clicked invite to ride");
+    // check if the driver has any active posts
+    const userPosts = await fetchUserPosts(userType);
+    if (userPosts) {
+      insertBooking(selectedPost, rideDetails, userType);
+    } else {
+      alert("Create a post first!");
+    }
+  };
+
   return (
     <Box p="5" bg="#F5F5F5" flex={1}>
       <VStack space={3}>
@@ -73,7 +93,7 @@ export default function SearchPage({ }) {
             <Modal.Header>Мэдээлэл</Modal.Header>
             <Modal.Body>
               {/* Display your post details here */}
-              <Text>{userType === "driver" ? "Жолоочийн нэр" : "Зорчигчийн нэр"}: {selectedPost?.authorName}</Text>
+              <Text>{userType === "rider" ? "Жолоочийн нэр" : "Зорчигчийн нэр"}: {selectedPost?.authorName}</Text>
               <Text>Хаанаас: {selectedPost?.departure}</Text>
               <Text>Хаашаа: {selectedPost?.destination}</Text>
               <Text>Өдөр: {selectedPost?.date}</Text>
@@ -81,9 +101,15 @@ export default function SearchPage({ }) {
               { selectedPost?.availableSeats && <Text>Суудлын тоо: {selectedPost?.availableSeats}</Text> }
               { selectedPost?.fee && <Text>Төлбөр: {selectedPost?.fee}</Text>}
               {/* Add more details... */}
+              <Input
+                placeholder="Enter ride details or ask a question..."
+                value={rideDetails}
+                onChangeText={setRideDetails}
+              />
             </Modal.Body>
             <Modal.Footer>
-              <Button onPress={handleCloseModal}>Close</Button>
+              {userType === "driver" && <Button onPress={submitInvite}>Суучих</Button>}
+              {userType === "rider" && <Button onPress={submitRequest}>Явяаа</Button>}
             </Modal.Footer>
           </Modal.Content>
         </Modal>

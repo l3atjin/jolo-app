@@ -1,3 +1,4 @@
+import { User } from "@supabase/supabase-js";
 import { supabase } from "../api/supabase";
 import { PostType, RequestType, UserType } from "../types";
 
@@ -5,6 +6,21 @@ async function getUserDetails() {
   const { data: { user } } = await supabase.auth.getUser();
   console.log("in getUserDetails()", user)
   return user;
+}
+
+export async function fetchUserPosts(userType: UserType) {
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log("in fetchUserPosts()", user);
+  const table = userType === "rider" ? "posts" : "requests";
+
+  const { data: posts, error } = await supabase
+    .from(table)
+    .select("*")
+    .eq("user_id", user.id);
+  
+  console.log("User posts:", JSON.stringify(posts, null, 2))
+
+  return posts;
 }
 
 async function getLocationId(locationName: string) {
@@ -21,21 +37,52 @@ async function getLocationId(locationName: string) {
   return locationData[0].id;
 }
 
-async function insertIntoTable(tableName: string, data: any, user_id: string) {
+async function getPostAuthor(post_id: string) {
+  const { data: author, error } = await supabase
+    .from("requests")
+    .select("user_id")
+    .eq("id", post_id);
+
+  if (error || !author.length) {
+    console.error("Error getting author ID for", error);
+    return null;
+  }
+
+  return author[0].user_id;
+}
+
+async function insertIntoTable(tableName: string, data: any) {
   const { data: response, error } = await supabase
     .from(tableName)
-    .insert([
-      {
-        user_id: user_id,
-        ...data
-      },
-    ]);
+    .insert(data);
 
   // handle response
   if (error) {
     console.error(error);
   } else {
     console.log(response);
+  }
+}
+
+export async function insertBooking(post: PostType | RequestType | null, message: string, userType: UserType) {
+  const user = await getUserDetails();
+
+  if (user && post) {
+    const riderId = (userType === "rider") ? user.id : await getPostAuthor(post.id);
+
+    const newData =  { 
+      post_id: post.id,
+      rider_id: riderId,
+      initiated_by: userType.toUpperCase(),
+      status: "PENDING",
+      message: message
+    }
+    insertIntoTable("bookings", newData);
+
+    console.log("inserted ", newData);
+  } else {
+    // handle case where no user is logged in
+    console.error("No user logged in or post ");
   }
 }
 
@@ -53,6 +100,7 @@ export async function insertRequest(params: RequestType) {
     console.log("Type is", time)
 
     const newData =  { 
+      user_id: user.id,
       departure_location_id: departureId,
       destination_location_id: destinationId,
       description: params.description,
@@ -60,7 +108,7 @@ export async function insertRequest(params: RequestType) {
       departure_day: params.date,
       ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime.toTimeString().split(' ')[0] })
     }
-    insertIntoTable("requests", newData, user.id);
+    insertIntoTable("requests", newData);
 
     console.log("inserted ", newData);
   } else {
@@ -77,6 +125,7 @@ export async function insertPost(params: PostType) {
     const destinationId = await getLocationId(params.destination);
 
     const newData =  { 
+      user_id: user.id,
       departure_location_id: departureId,
       destination_location_id: destinationId,
       available_seats: params.availableSeats,
@@ -86,7 +135,7 @@ export async function insertPost(params: PostType) {
       departure_day: params.date,
       ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime })
     }
-    insertIntoTable("posts", newData, user.id);
+    insertIntoTable("posts", newData);
 
     console.log("inserted ", newData);
   } else {
