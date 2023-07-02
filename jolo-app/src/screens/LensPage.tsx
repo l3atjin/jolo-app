@@ -16,6 +16,7 @@ export default function LensPage({ navigation }: LensPageProp) {
   };
 
   const onPressDriver = () => {
+    console.log("CLICKED DRIVER");
     setUserType("driver");
     return navigation.navigate("MainNavigation");
   };
