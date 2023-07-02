@@ -9,11 +9,12 @@ import {
   Spinner,
   VStack,
   Input,
+  Select,
 } from "native-base";
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
-import { fetchData, fetchUserPosts, insertBooking } from "../utils/requests";
+import { fetchAllPosts, fetchUserPosts, insertBooking } from "../utils/requests";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
 
@@ -24,13 +25,17 @@ export default function SearchPage({ }) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<PostType | RequestType | null>(null);
   const [rideDetails, setRideDetails] = useState("");
+  const [selectedDriverPost, setSelectedDriverPost] = useState<PostType | null>(null);
+  const [driverPosts, setDriverPosts] = useState<any[] | null>(null);
 
 
   // Fetch posts on component mount
   useEffect(() => {
     async function fetchInitialData() {
-      const initialPosts = await fetchData(userType);
+      const initialPosts = await fetchAllPosts(userType);
       setData(initialPosts);
+      const userPosts = await fetchUserPosts(userType);
+      setDriverPosts(userPosts);
       setIsLoading(false);
     }
     fetchInitialData();
@@ -41,7 +46,7 @@ export default function SearchPage({ }) {
   async function submitSearch(searchParams: SearchParams) {
     setIsLoading(true);
     alert("Pressed Search!");
-    const newData = await fetchData(userType, searchParams);
+    const newData = await fetchAllPosts(userType, searchParams);
     setData(newData);
     setIsLoading(false);
   }
@@ -66,6 +71,7 @@ export default function SearchPage({ }) {
     // check if the driver has any active posts
     const userPosts = await fetchUserPosts(userType);
     if (userPosts) {
+      // have driver choose which post he wants to invite to
       insertBooking(selectedPost, rideDetails, userType);
     } else {
       alert("Create a post first!");
@@ -101,6 +107,12 @@ export default function SearchPage({ }) {
               { selectedPost?.availableSeats && <Text>Суудлын тоо: {selectedPost?.availableSeats}</Text> }
               { selectedPost?.fee && <Text>Төлбөр: {selectedPost?.fee}</Text>}
               {/* Add more details... */}
+              {isLoading ? (
+                <Spinner />
+              ) : (
+                driverPosts.map((item) => <Post key={item.id} post={item} onClick={ () => setSelectedDriverPost(item)}/>)
+              )}
+              
               <Input
                 placeholder="Enter ride details or ask a question..."
                 value={rideDetails}

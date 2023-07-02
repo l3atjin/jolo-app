@@ -12,15 +12,28 @@ export async function fetchUserPosts(userType: UserType) {
   const { data: { user } } = await supabase.auth.getUser();
   console.log("in fetchUserPosts()", user);
   const table = userType === "rider" ? "posts" : "requests";
+  const additionalFields = userType === "rider" ? ", fee, available_seats" : "";
 
-  const { data: posts, error } = await supabase
+  let query = supabase
     .from(table)
-    .select("*")
-    .eq("user_id", user.id);
-  
-  console.log("User posts:", JSON.stringify(posts, null, 2))
+    .select(`
+      id,
+      departure_time,
+      user_id:profiles (first_name),
+      departure_location_id:locations!${table}_departure_location_id_fkey(location_name),
+      destination_location_id:locations!${table}_destination_location_id_fkey(location_name),
+      departure_day,
+      time_of_day,
+      description
+      ${additionalFields}
+    `)
+    .eq("user_id", user?.id);
 
-  return posts;
+  const { data, error } = await query;
+  
+  console.log("User posts:", JSON.stringify(data, null, 2))
+
+  return transformedData(data, userType);
 }
 
 async function getLocationId(locationName: string) {
@@ -144,7 +157,7 @@ export async function insertPost(params: PostType) {
   }
 }
 
-export async function fetchData(
+export async function fetchAllPosts(
   userType: UserType,
   searchParams?: {
     departure?: string;
@@ -204,7 +217,13 @@ export async function fetchData(
     return null;
   }
 
-  const transformedData = data.map((post: any) => {
+  console.log(JSON.stringify(transformedData(data, userType), null, 2));
+
+  return transformedData(data, userType);
+}
+
+function transformedData(data: any, userType: UserType) {
+  return data.map((post: any) => {
     const baseData = {
       id: post.id,
       exactTime: post.departure_time,
@@ -225,10 +244,5 @@ export async function fetchData(
     }
 
     return baseData;
-  });
-
-  console.log(JSON.stringify(transformedData, null, 2));
-  console.log(JSON.stringify(data, null, 2));
-
-  return transformedData;
+  })
 }
