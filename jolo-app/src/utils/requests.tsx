@@ -11,8 +11,8 @@ async function getUserDetails() {
 export async function fetchUserPosts(userType: UserType) {
   const { data: { user } } = await supabase.auth.getUser();
   console.log("in fetchUserPosts()", user);
-  const table = userType === "rider" ? "posts" : "requests";
-  const additionalFields = userType === "rider" ? ", fee, available_seats" : "";
+  const table = userType === "driver" ? "posts" : "requests";
+  const additionalFields = userType === "driver" ? ", fee, available_seats" : "";
 
   let query = supabase
     .from(table)
