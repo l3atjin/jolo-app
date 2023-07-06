@@ -34,8 +34,8 @@ export default function SearchPage({ }) {
     async function fetchInitialData() {
       const initialPosts = await fetchAllPosts(userType);
       setData(initialPosts);
-      const userPosts = await fetchUserPosts(userType);
-      setDriverPosts(userPosts);
+      //const userPosts = await fetchUserPosts(userType);
+      //setDriverPosts(userPosts);
       setIsLoading(false);
     }
     fetchInitialData();
@@ -98,8 +98,9 @@ export default function SearchPage({ }) {
             <Modal.CloseButton />
             <Modal.Header>Мэдээлэл</Modal.Header>
             <Modal.Body>
-              {/* Display your post details here */}
-              <Text>{userType === "rider" ? "Жолоочийн нэр" : "Зорчигчийн нэр"}: {selectedPost?.authorName}</Text>
+              {/* Display your post details here 
+              <Text>{userType === "rider" ? "Жолоочийн нэр" : "Зорчигчийн нэр"}: {selectedPost?.authorName}</Text>*/}
+              
               <Text>Хаанаас: {selectedPost?.departure}</Text>
               <Text>Хаашаа: {selectedPost?.destination}</Text>
               <Text>Өдөр: {selectedPost?.date}</Text>
@@ -110,7 +111,8 @@ export default function SearchPage({ }) {
               {isLoading ? (
                 <Spinner />
               ) : (
-                driverPosts.map((item) => <Post key={item.id} post={item} onClick={ () => setSelectedDriverPost(item)}/>)
+                <></>
+                //driverPosts.map((item) => <Post key={item.id} post={item} onClick={ () => setSelectedDriverPost(item)}/>)
               )}
               
               <Input
