@@ -77,14 +77,14 @@ async function insertIntoTable(tableName: string, data: any) {
   }
 }
 
-export async function insertBooking(post: PostType | RequestType | null, message: string, userType: UserType) {
+export async function insertBooking(post: PostType | RequestType | null, message: string, userType: UserType, driverPost?: any) {
   const user = await getUserDetails();
 
   if (user && post) {
     const riderId = (userType === "rider") ? user.id : await getPostAuthor(post.id);
 
     const newData =  { 
-      post_id: post.id,
+      post_id: driverPost.id,
       rider_id: riderId,
       initiated_by: userType.toUpperCase(),
       status: "PENDING",
@@ -220,6 +220,10 @@ export async function fetchAllPosts(
   console.log(JSON.stringify(transformedData(data, userType), null, 2));
 
   return transformedData(data, userType);
+}
+
+export function fetchUserBookings(userType: UserType) {
+  return [];
 }
 
 function transformedData(data: any, userType: UserType) {

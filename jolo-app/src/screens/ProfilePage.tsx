@@ -19,7 +19,7 @@ export default function ProfilePage() {
   return (
     <View>
       <Account/>
-      <Button onPress={handleClick}>SWITCH</Button>
+      <Button onPress={handleClick}>{userType==="driver" ? "Зорчигч болох" : "Жолооч болох"}</Button>
     </View>
   );
 }
