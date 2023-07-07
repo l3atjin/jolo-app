@@ -29,13 +29,13 @@ export default function MyTripsPage() {
 
   return (
     <Box flex={1} alignItems="center" justifyContent="center">
-      <Heading mt={20}>My posts:</Heading>
+      <Heading mt={20}>My Posts and Bookings</Heading>
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
         <Heading mt={20}>Booking Requests:</Heading>
         {userBookings?.map((booking) => (
           <Booking key={booking.id} booking={booking} onClick={handleClick}/>  // render each booking request
         ))}
-        <Heading mt={20}>My Posts:</Heading>
+        <Heading mt={20}>{userType === "driver" ? "My Posts:" : "My Requests"}</Heading>
         {userPosts?.map((post) => (
           <Post key={post.id} post={post} onClick={() => handleClick(post)} />
         ))}
