@@ -14,7 +14,7 @@ import {
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
-import { fetchAllPosts, fetchUserPosts, insertBooking, insertBookingRider } from "../utils/requests";
+import { fetchAllPosts, fetchUserPosts, insertBookingDriver, insertBookingRider } from "../utils/requests";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
 
@@ -62,17 +62,16 @@ export default function SearchPage({ }) {
   const submitRequest = () => {
     console.log("Clicked book");
     // insert a new booking with pending status
-    insertBookingRider(selectedPost, rideDetails, userType);
+    insertBookingRider(selectedPost, rideDetails);
 
   };
 
   const submitInvite = async () => {
     console.log("Clicked invite to ride");
     // check if the driver has any active posts
-    const userPosts = await fetchUserPosts(userType);
-    if (userPosts) {
+    if (driverPosts) {
       // have driver choose which post he wants to invite to
-      insertBooking(selectedPost, rideDetails, userType, selectedDriverPost);
+      insertBookingDriver(selectedDriverPost, rideDetails, selectedPost);
     } else {
       alert("Create a post first!");
     }

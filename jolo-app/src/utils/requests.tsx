@@ -77,7 +77,7 @@ async function insertIntoTable(tableName: string, data: any) {
   }
 }
 
-export async function insertBookingRider(post: PostType | RequestType | null, message: string, userType: UserType) {
+export async function insertBookingRider(post: PostType | RequestType | null, message: string) {
   const user = await getUserDetails();
   const driver_id = await getPostAuthor(post?.id, "posts");
   if (user && post) {
@@ -97,15 +97,17 @@ export async function insertBookingRider(post: PostType | RequestType | null, me
   }
 }
 
-export async function insertBookingDriver(post: PostType | RequestType | null, message: string, userType: UserType, driverPost?: any) {
+export async function insertBookingDriver(driverPost: PostType | null, message: string, riderRequest: RequestType | null) {
   const user = await getUserDetails();
 
-  if (user && post) {
-    const riderId = await getPostAuthor(post.id, "requests");
+  if (user) {
+    const rider_id = await getPostAuthor(riderRequest?.id, "requests");
 
     const newData =  { 
-      post_id: post.id,
-      rider_id: riderId,
+      post_id: driverPost?.id,
+      request_id: riderRequest?.id,
+      driver_id: user.id,
+      rider_id: rider_id,
       status: "PENDING",
       message: message
     }
