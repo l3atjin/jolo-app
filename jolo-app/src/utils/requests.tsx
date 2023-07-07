@@ -50,9 +50,9 @@ async function getLocationId(locationName: string) {
   return locationData[0].id;
 }
 
-async function getPostAuthor(post_id: string) {
+async function getPostAuthor(post_id: string, table: string) {
   const { data: author, error } = await supabase
-    .from("requests")
+    .from(table)
     .select("user_id")
     .eq("id", post_id);
 
@@ -77,16 +77,35 @@ async function insertIntoTable(tableName: string, data: any) {
   }
 }
 
-export async function insertBooking(post: PostType | RequestType | null, message: string, userType: UserType, driverPost?: any) {
+export async function insertBookingRider(post: PostType | RequestType | null, message: string, userType: UserType) {
+  const user = await getUserDetails();
+  const driver_id = await getPostAuthor(post?.id, "posts");
+  if (user && post) {
+    const newData =  { 
+      post_id: post.id,
+      driver_id: driver_id,
+      rider_id: user.id,
+      status: "PENDING",
+      message: message
+    }
+    insertIntoTable("bookings", newData);
+
+    console.log("inserted ", newData);
+  } else {
+    // handle case where no user is logged in
+    console.error("No user logged in or post ");
+  }
+}
+
+export async function insertBookingDriver(post: PostType | RequestType | null, message: string, userType: UserType, driverPost?: any) {
   const user = await getUserDetails();
 
   if (user && post) {
-    const riderId = (userType === "rider") ? user.id : await getPostAuthor(post.id);
+    const riderId = await getPostAuthor(post.id, "requests");
 
     const newData =  { 
-      post_id: driverPost.id,
+      post_id: post.id,
       rider_id: riderId,
-      initiated_by: userType.toUpperCase(),
       status: "PENDING",
       message: message
     }

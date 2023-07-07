@@ -14,7 +14,7 @@ import {
 import Post from "../components/Post";
 import { PostType, RequestType } from "../types";
 import { useUserType } from "../context/UserTypeProvider";
-import { fetchAllPosts, fetchUserPosts, insertBooking } from "../utils/requests";
+import { fetchAllPosts, fetchUserPosts, insertBooking, insertBookingRider } from "../utils/requests";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
 
@@ -62,7 +62,7 @@ export default function SearchPage({ }) {
   const submitRequest = () => {
     console.log("Clicked book");
     // insert a new booking with pending status
-    insertBooking(selectedPost, rideDetails, userType);
+    insertBookingRider(selectedPost, rideDetails, userType);
 
   };
 
