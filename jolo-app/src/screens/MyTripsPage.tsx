@@ -1,10 +1,10 @@
-import { ScrollView, Box, Heading } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import { ScrollView, Box, Heading } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import Booking from '../components/Booking';
 import Post from '../components/Post';
 import { UserTypeProvider, useUserType } from '../context/UserTypeProvider';
 import { BasePostType, PostType, RequestType } from '../types';
-import { fetchUserPosts, fetchUserBookings } from '../utils/requests';  // new function
+import { fetchUserPosts, fetchUserBookingsRequests } from '../utils/requests';
 
 export default function MyTripsPage() {
   const [userPosts, setUserPosts] = useState<PostType[] | RequestType[] | null>(null);
@@ -14,7 +14,7 @@ export default function MyTripsPage() {
   useEffect(() => {
     async function getUserData() {
       const userPosts = await fetchUserPosts(userType);
-      const userBookings = await fetchUserBookings(userType);  // new request
+      const userBookings = await fetchUserBookingsRequests(userType);  // new request
 
       setUserPosts(userPosts);
       setUserBookings(userBookings);  // update state

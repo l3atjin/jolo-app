@@ -1,42 +1,36 @@
-import { Box, HStack, Spacer, Text } from "native-base";
 import React from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-interface BookingType {
-  id: string; // unique id for the booking
-  driverName: string; // driver's name
-  departure: string; // departure location
-  destination: string; // destination location
-  date: string; // date of the trip
-  timeOfDay: string; // time of day for the trip
-  status: "PENDING" | "ACCEPTED" | "DECLINED" | "COMPLETED"; // booking status
-}
-
+import { Box, Text, VStack, Button } from "native-base";
 
 interface BookingComponentProps {
-  booking: BookingType;
-  onClick: (booking: BookingType) => void;
+  booking: any; // replace with your BookingType when it's ready
+  onAccept: (booking: any) => void; // replace any with your BookingType when it's ready
+  onReject: (booking: any) => void; // replace any with your BookingType when it's ready
 }
 
-const Booking: React.FC<BookingComponentProps> = ({ booking, onClick }) => {
+const Booking: React.FC<BookingComponentProps> = ({ booking, onAccept, onReject }) => {
+  const handleAccept = () => {
+    onAccept(booking);
+  };
+
+  const handleReject = () => {
+    onReject(booking);
+  };
+
   return (
-    <TouchableOpacity onPress={() => {onClick(booking)}}>
-      <Box bg="white" p="3" rounded="lg" my="2" shadow="2">
-        <HStack space={3} alignItems="center">
-          <Text fontWeight="bold" fontSize="md">
-            {booking.driverName}
-          </Text>
-          <Text>
-            {booking.departure} - {booking.destination}
-          </Text>
-          <Spacer />
-          <Text>{booking.date}</Text>
-          <Text>{booking.timeOfDay}</Text>
-          <Text>Status: {booking.status}</Text>
-        </HStack>
-      </Box>
-    </TouchableOpacity>
-   
+    <Box bg="white" p="3" rounded="lg" my="2" shadow="2">
+      <VStack space={3} alignItems="flex-start">
+        <Text>{booking.post_id.departure_day} at {booking.post_id.time_of_day}</Text>
+        <Text>From: {booking.post_id.departure_location_id.location_name}</Text>
+        <Text>To: {booking.post_id.destination_location_id.location_name}</Text>
+        <Text>Driver: {booking.driver_id.first_name}</Text>
+        <Text>Rider: {booking.rider_id.first_name}</Text>
+        <Text>{booking.message}</Text>
+        <Box flexDirection="row">
+          <Button onPress={handleAccept} mr={3}>Accept</Button>
+          <Button onPress={handleReject} variant="outline">Reject</Button>
+        </Box>
+      </VStack>
+    </Box>
   );
 };
 

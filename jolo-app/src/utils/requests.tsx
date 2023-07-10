@@ -243,8 +243,46 @@ export async function fetchAllPosts(
   return transformedData(data, userType);
 }
 
-export function fetchUserBookings(userType: UserType) {
-  return [];
+export async function fetchUserBookingsRequests(userType: UserType) {
+  const user = await getUserDetails();
+  if (user) {
+    let query = supabase
+      .from('bookings')
+      .select(`
+        id,
+        post_id:posts (
+          departure_location_id:locations!posts_departure_location_id_fkey(location_name),
+          destination_location_id:locations!posts_destination_location_id_fkey(location_name),
+          departure_day,
+          time_of_day
+        ),
+        driver_id:profiles!bookings_driver_id_fkey (first_name),
+        rider_id:profiles!bookings_rider_id_fkey (first_name),
+        status,
+        message
+      `)
+      .eq('status', 'PENDING');
+
+    if (userType === 'driver') {
+      query = query.eq('driver_id', user.id);
+    } else if (userType === 'rider') {
+      query = query.eq('rider_id', user.id);
+    }
+
+    const { data, error } = await query;
+
+    console.log("Ride Requests: ", JSON.stringify(data, null, 2));
+
+    if (error) {
+      console.error('Error fetching user bookings: ', error);
+      return null;
+    }
+
+    return data;
+  } else {
+    console.error('No user logged in');
+    return null;
+  }
 }
 
 function transformedData(data: any, userType: UserType) {
