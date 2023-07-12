@@ -23,8 +23,17 @@ export default function MyTripsPage() {
     getUserData();
   }, []);
 
-  const handleClick = (post: any) => {
-    // Handle click
+  const handleAccept = (booking: any) => {
+    // they should be redirected to the payment page
+  }
+
+  const handleReject = (booking: any) => {
+    // delete booking or just update the status
+  }
+
+  const handlePostClick = (post) => {
+    // should show post details here
+    console.log("post clicked");
   }
 
   return (
@@ -33,11 +42,11 @@ export default function MyTripsPage() {
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
         <Heading mt={20}>Booking Requests:</Heading>
         {userBookings?.map((booking) => (
-          <Booking key={booking.id} booking={booking} onClick={handleClick}/>  // render each booking request
+          <Booking key={booking.id} booking={booking} onAccept={handleAccept} onReject={handleReject}/>  // render each booking request
         ))}
         <Heading mt={20}>{userType === "driver" ? "My Posts:" : "My Requests"}</Heading>
         {userPosts?.map((post) => (
-          <Post key={post.id} post={post} onClick={() => handleClick(post)} />
+          <Post key={post.id} post={post} onClick={() => handlePostClick(post)} />
         ))}
       </ScrollView>
     </Box>

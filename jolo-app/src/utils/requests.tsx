@@ -264,9 +264,13 @@ export async function fetchUserBookingsRequests(userType: UserType) {
       .eq('status', 'PENDING');
 
     if (userType === 'driver') {
-      query = query.eq('driver_id', user.id);
+      query = query
+        .eq('driver_id', user.id)
+        .is('request_id', null);
     } else if (userType === 'rider') {
-      query = query.eq('rider_id', user.id);
+      query = query
+        .eq('rider_id', user.id)
+        .not('request_id', "is", null);
     }
 
     const { data, error } = await query;
@@ -284,6 +288,7 @@ export async function fetchUserBookingsRequests(userType: UserType) {
     return null;
   }
 }
+
 
 function transformedData(data: any, userType: UserType) {
   return data.map((post: any) => {
