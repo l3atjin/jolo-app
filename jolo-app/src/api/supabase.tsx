@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL } from "@env";
 import { SUPABASE_ANON_KEY } from "@env";
+import { Database } from "../../lib/database.types";
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -16,7 +17,7 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     storage: ExpoSecureStoreAdapter as any,
     autoRefreshToken: true,
