@@ -4,7 +4,7 @@ import Post from "../components/Post";
 import { useUserType } from "../context/UserTypeProvider";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
-import { fetchPosts, PostResponse } from "../utils/requests";
+import { fetchPosts, PostResponse, insertBookingRider } from "../utils/requests";
 import { PostModal } from "../components/PostModal";
 
 export default function PostSearchPage() {
@@ -14,6 +14,8 @@ export default function PostSearchPage() {
   const [selectedPost, setSelectedPost] = useState<PostResponse[0] | null>(
     null,
   );
+  const [rideDetails, setRideDetails] = useState("");
+  
 
   // Fetch posts on component mount
   useEffect(() => {
@@ -27,10 +29,10 @@ export default function PostSearchPage() {
     fetchInitialData();
   }, []);
 
-  async function submitSearch(searchParams: SearchParams) {
+  async function submitSearch(searchParam: SearchParams) {
     setIsLoading(true);
     if (userType == "rider") {
-      const newData: PostResponse = await fetchPosts(searchParams);
+      const newData: PostResponse = await fetchPosts(searchParam);
       setData(newData);
     }
     setIsLoading(false);
@@ -42,6 +44,14 @@ export default function PostSearchPage() {
 
   const handleCloseModal = () => {
     setSelectedPost(null);
+    setRideDetails("");
+  };
+
+  const submitRequest = () => {
+    console.log("Clicked book");
+    // insert a new booking with pending status
+    insertBookingRider(selectedPost, rideDetails);
+
   };
 
   return (
@@ -64,6 +74,9 @@ export default function PostSearchPage() {
         <PostModal
           post={selectedPost}
           handleClose={handleCloseModal}
+          rideDetails={rideDetails}
+          setRideDetails={setRideDetails}
+          submitRequest={submitRequest}
         />
       </VStack>
     </Box>

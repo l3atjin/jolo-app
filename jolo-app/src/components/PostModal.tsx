@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { PostResponse } from "../utils/requests";
-import { Button, Modal, Text } from "native-base";
+import { Button, Input, Modal, Text } from "native-base";
 import { useUserType } from "../context/UserTypeProvider";
 
 interface PostModalProps {
   post: PostResponse[0] | null;
   handleClose: () => void;
+  rideDetails: string;
+  setRideDetails: (value: string) => void;
+  submitRequest: () => void;
 }
 
-export const PostModal: React.FC<PostModalProps> = ({ post, handleClose }) => {
+export const PostModal: React.FC<PostModalProps> = ({ post, handleClose, rideDetails, setRideDetails, submitRequest }) => {
   const [userType] = useUserType();
   return (
     <Modal isOpen={post !== null} onClose={handleClose}>
@@ -24,9 +27,14 @@ export const PostModal: React.FC<PostModalProps> = ({ post, handleClose }) => {
           <Text>Хэзээ: {post?.departure_time ?? post?.time_of_day}</Text>
           <Text>Суудлын тоо: {post?.available_seats}</Text>
           <Text>Төлбөр: {post?.fee}</Text>
+          <Input
+                placeholder="Enter ride details or ask a question..."
+                value={rideDetails}
+                onChangeText={setRideDetails}
+              />
         </Modal.Body>
         <Modal.Footer>
-          <Button onPress={handleClose}>Close</Button>
+          <Button onPress={submitRequest}>Явяаа</Button>
         </Modal.Footer>
       </Modal.Content>
     </Modal>

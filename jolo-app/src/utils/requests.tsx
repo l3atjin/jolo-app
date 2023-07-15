@@ -12,21 +12,20 @@ async function getUserDetails() {
 export async function fetchUserPosts(userType: UserType) {
   const { data: { user } } = await supabase.auth.getUser();
   console.log("in fetchUserPosts()", user);
-  const table = userType === "driver" ? "posts" : "requests";
-  const additionalFields = userType === "driver" ? ", fee, available_seats" : "";
 
   let query = supabase
-    .from(table)
+    .from("posts")
     .select(`
       id,
       departure_time,
-      user_id:profiles (first_name),
-      departure_location_id:locations!${table}_departure_location_id_fkey(location_name),
-      destination_location_id:locations!${table}_destination_location_id_fkey(location_name),
+      author: profiles (first_name, avatar_url),
+      departure_location:locations!posts_departure_location_id_fkey (location_name),
+      destination_location:locations!posts_destination_location_id_fkey (location_name),
       departure_day,
       time_of_day,
-      description
-      ${additionalFields}
+      description,
+      fee,
+      available_seats
     `)
     .eq("user_id", user?.id);
   
@@ -66,7 +65,7 @@ async function getLocationId(locationName: string) {
   return locationData[0].id;
 }
 
-async function getPostAuthor(post_id: string, table: string) {
+async function getPostAuthor(post_id: string | undefined, table: string) {
   const { data: author, error } = await supabase
     .from(table)
     .select("user_id")
@@ -93,7 +92,7 @@ async function insertIntoTable(tableName: string, data: any) {
   }
 }
 
-export async function insertBookingRider(post: PostType | RequestType | null, message: string) {
+export async function insertBookingRider(post: PostResponse[0] | null, message: string) {
   const user = await getUserDetails();
   const driver_id = await getPostAuthor(post?.id, "posts");
   if (user && post) {
@@ -359,10 +358,9 @@ export async function fetchRequests(
     .select(`
       id,
       departure_time,
-      author:profiles,
-      author: profiles (first_name, avatar_url),
-      departure_location:locations!posts_departure_location_id_fkey (location_name),
-      destination_location:locations!posts_destination_location_id_fkey (location_name),
+      author:profiles (first_name, avatar_url),
+      departure_location:locations!requests_departure_location_id_fkey (location_name),
+      destination_location:locations!requests_destination_location_id_fkey (location_name),
       departure_day,
       time_of_day,
       description
@@ -392,6 +390,8 @@ export async function fetchRequests(
       destination_location: Location;
     })[]
   >();
+
+  console.log("fetched requests are: ", JSON.stringify(data, 2, null));
 
   if (error) {
     console.log("Error: ", error);
