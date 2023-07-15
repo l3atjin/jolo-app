@@ -5,9 +5,10 @@ interface BookingComponentProps {
   booking: any; // replace with your BookingType when it's ready
   onAccept: (booking: any) => void; // replace any with your BookingType when it's ready
   onReject: (booking: any) => void; // replace any with your BookingType when it's ready
+  isPending: boolean;
 }
 
-const Booking: React.FC<BookingComponentProps> = ({ booking, onAccept, onReject }) => {
+const Booking: React.FC<BookingComponentProps> = ({ booking, onAccept, onReject, isPending }) => {
   const handleAccept = () => {
     onAccept(booking);
   };
@@ -26,8 +27,12 @@ const Booking: React.FC<BookingComponentProps> = ({ booking, onAccept, onReject 
         <Text>Rider: {booking.rider_id.first_name}</Text>
         <Text>{booking.message}</Text>
         <Box flexDirection="row">
-          <Button onPress={handleAccept} mr={3}>Accept</Button>
-          <Button onPress={handleReject} variant="outline">Reject</Button>
+          {isPending && (
+            <>
+              <Button onPress={() => onAccept(booking)}>Accept</Button>
+              <Button onPress={() => onReject(booking)}>Reject</Button>
+            </>
+          )}
         </Box>
       </VStack>
     </Box>

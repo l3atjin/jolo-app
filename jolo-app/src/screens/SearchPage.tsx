@@ -57,6 +57,7 @@ export default function SearchPage({ }) {
 
   const handleCloseModal = () => {
     setSelectedPost(null);
+    setSelectedDriverPost(null);
   };
 
   const submitRequest = () => {
@@ -71,6 +72,9 @@ export default function SearchPage({ }) {
     // check if the driver has any active posts
     if (driverPosts) {
       // have driver choose which post he wants to invite to
+      if (!selectedDriverPost) {
+        alert("Pick a post to invite to!");
+      }
       insertBookingDriver(selectedDriverPost, rideDetails, selectedPost);
     } else {
       alert("Create a post first!");

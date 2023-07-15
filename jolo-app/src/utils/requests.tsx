@@ -260,8 +260,7 @@ export async function fetchUserBookingsRequests(userType: UserType) {
         rider_id:profiles!bookings_rider_id_fkey (first_name),
         status,
         message
-      `)
-      .eq('status', 'PENDING');
+      `);
 
     if (userType === 'driver') {
       query = query
@@ -281,13 +280,49 @@ export async function fetchUserBookingsRequests(userType: UserType) {
       console.error('Error fetching user bookings: ', error);
       return null;
     }
+    // Separate bookings into two arrays based on status
+    const pendingBookings = data.filter(b => b.status === 'PENDING');
+    const acceptedBookings = data.filter(b => b.status === 'ACCEPTED');
 
-    return data;
+    return { pendingBookings, acceptedBookings };
   } else {
     console.error('No user logged in');
     return null;
   }
 }
+
+export async function acceptBooking(bookingId: number) {
+  // 1. Make a request to update the booking status
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({ status: 'ACCEPTED' })
+    .eq('id', bookingId);
+  console.log("in acceptbooking");
+  console.log("booking id is", bookingId);
+  console.log(JSON.stringify(data, null, 2));
+  // 2. Return the updated booking
+  if (error) {
+    console.error('Error accepting booking: ', error);
+    return null;
+  }
+}
+
+export async function rejectBooking(bookingId: number) {
+  // 1. Make a request to update the booking status
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({ status: 'REJECTED' })
+    .eq('id', bookingId);
+  console.log("in reject booking");
+  console.log("booking id is", bookingId);
+  console.log(JSON.stringify(data, null, 2));
+  // 2. Return the updated booking
+  if (error) {
+    console.error('Error rejecting booking: ', error);
+    return null;
+  }
+}
+
 
 
 function transformedData(data: any, userType: UserType) {
