@@ -1,7 +1,7 @@
 import { Database } from "../../lib/database.types";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../api/supabase";
-import { PostType, RequestType } from "../types";
+import { PostType, RequestType, UserType } from "../types";
 
 async function getUserDetails() {
   const { data: { user } } = await supabase.auth.getUser();
@@ -29,12 +29,27 @@ export async function fetchUserPosts(userType: UserType) {
       ${additionalFields}
     `)
     .eq("user_id", user?.id);
+  
+  type Post = Database["public"]["Tables"]["posts"]["Row"];
+  type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+  type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-  const { data, error } = await query;
+  const { data, error } = await query.returns<
+    (Post & {
+      author: Profile;
+      departure_location: Location;
+      destination_location: Location;
+    })[]
+  >();
   
   console.log("User posts:", JSON.stringify(data, null, 2))
 
-  return transformedData(data, userType);
+  if (error) {
+    console.log("Error fetching user posts: ", error);
+    throw error;
+  }
+
+  return data;
 }
 
 async function getLocationId(locationName: string) {
@@ -241,8 +256,89 @@ export async function fetchPosts(
     console.log("Error: ", error);
     throw error;
   }
+  console.log("posts are", JSON.stringify(data, null, 2));
 
   return data;
+}
+
+export async function fetchUserBookingsRequests(userType: UserType) {
+  const user = await getUserDetails();
+  if (user) {
+    let query = supabase
+      .from('bookings')
+      .select(`
+        id,
+        post_id:posts (
+          departure_location_id:locations!posts_departure_location_id_fkey(location_name),
+          destination_location_id:locations!posts_destination_location_id_fkey(location_name),
+          departure_day,
+          time_of_day
+        ),
+        driver_id:profiles!bookings_driver_id_fkey (first_name),
+        rider_id:profiles!bookings_rider_id_fkey (first_name),
+        status,
+        message
+      `);
+
+    if (userType === 'driver') {
+      query = query
+        .eq('driver_id', user.id)
+        .is('request_id', null);
+    } else if (userType === 'rider') {
+      query = query
+        .eq('rider_id', user.id)
+        .not('request_id', "is", null);
+    }
+
+    const { data, error } = await query;
+
+    console.log("Ride Requests: ", JSON.stringify(data, null, 2));
+
+    if (error) {
+      console.error('Error fetching user bookings: ', error);
+      return null;
+    }
+    // Separate bookings into two arrays based on status
+    const pendingBookings = data.filter(b => b.status === 'PENDING');
+    const acceptedBookings = data.filter(b => b.status === 'ACCEPTED');
+
+    return { pendingBookings, acceptedBookings };
+  } else {
+    console.error('No user logged in');
+    return null;
+  }
+}
+
+export async function acceptBooking(bookingId: number) {
+  // 1. Make a request to update the booking status
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({ status: 'ACCEPTED' })
+    .eq('id', bookingId);
+  console.log("in acceptbooking");
+  console.log("booking id is", bookingId);
+  console.log(JSON.stringify(data, null, 2));
+  // 2. Return the updated booking
+  if (error) {
+    console.error('Error accepting booking: ', error);
+    return null;
+  }
+}
+
+export async function rejectBooking(bookingId: number) {
+  // 1. Make a request to update the booking status
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({ status: 'REJECTED' })
+    .eq('id', bookingId);
+  console.log("in reject booking");
+  console.log("booking id is", bookingId);
+  console.log(JSON.stringify(data, null, 2));
+  // 2. Return the updated booking
+  if (error) {
+    console.error('Error rejecting booking: ', error);
+    return null;
+  }
 }
 
 export async function fetchRequests(

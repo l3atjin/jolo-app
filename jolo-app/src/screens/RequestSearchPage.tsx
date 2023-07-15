@@ -1,5 +1,6 @@
 import React from 'react';
+import { Text } from "react-native";
 
 export default function RequestSearchPage({}) {
-  return <>"Hello"</>;
+  return <Text>hehe</Text>;
 }
