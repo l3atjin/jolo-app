@@ -10,6 +10,7 @@ export default function DriverForm() {
 
   const handleSubmit = (data: PostType) => {
     // Handle submission specifically for Driver
+    // add a check here to see if driver went through backrgound check
     data.availableSeats = availableSeats;
     data.fee = fee;
     insertPost(data);

@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const [userType, setUserType] = useUserType();
   const handleClick = () => {
     if (userType === "rider") {
-      setUserType?.("driver");
+      setUserType("driver");
     } else {
       setUserType("rider");
     }
@@ -19,7 +19,7 @@ export default function ProfilePage() {
   return (
     <View>
       <Account/>
-      <Button onPress={handleClick}>SWITCH</Button>
+      <Button onPress={handleClick}>{userType==="driver" ? "Зорчигч болох" : "Жолооч болох"}</Button>
     </View>
   );
 }

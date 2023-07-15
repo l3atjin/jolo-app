@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { useUserType } from "../context/UserTypeProvider";
 import CreatePostPage from "../screens/CreatePostPage";
+import MyTripsPage from "../screens/MyTripsPage";
 import ProfilePage from "../screens/ProfilePage";
 import PostSearchPage from "../screens/PostSearchPage";
 import RequestSearchPage from "../screens/RequestSearchPage";
@@ -18,6 +19,7 @@ export default function MainNavigation() {
     >
       <Tab.Screen name="Search" component={userType == 'rider' ? PostSearchPage : RequestSearchPage} />
       <Tab.Screen name="CreatePostPage" component={CreatePostPage} />
+      <Tab.Screen name="MyTrips" component={MyTripsPage} />
       <Tab.Screen name="Profile" component={ProfilePage} />
     </Tab.Navigator>
   );
