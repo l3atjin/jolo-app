@@ -302,6 +302,10 @@ export async function fetchPosts(
 
 export async function fetchUserBookingsRequests(userType: UserType) {
   const user = await getUserDetails();
+  type Post = Database["public"]["Tables"]["posts"]["Row"];
+  type Booking = Database["public"]["Tables"]["bookings"]["Row"];
+  type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
   if (user) {
     let query = supabase
       .from('bookings')
@@ -329,7 +333,13 @@ export async function fetchUserBookingsRequests(userType: UserType) {
         .not('request_id', "is", null);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.returns<
+      (Booking & {
+        post: Post;
+        driver_id: Profile;
+        rider_id: Profile;
+      })[]
+    >();
 
     console.log("Ride Requests: ", JSON.stringify(data, null, 2));
 
@@ -444,3 +454,4 @@ export async function fetchRequests(
 // export return types so that they can be used by components
 export type PostResponse = Awaited<ReturnType<typeof fetchPosts>>;
 export type RequestResponse = Awaited<ReturnType<typeof fetchRequests>>;
+export type BookingResponse = Awaited<ReturnType<typeof fetchUserBookingsRequests>>;

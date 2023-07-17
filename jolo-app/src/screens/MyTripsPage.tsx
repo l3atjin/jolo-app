@@ -5,12 +5,12 @@ import Post from '../components/Post';
 import Request from '../components/Request';
 import { useUserActivity } from '../context/UserPostsProvider';
 import { useUserType } from '../context/UserTypeProvider';
-import { fetchUserBookingsRequests, acceptBooking, rejectBooking } from '../utils/requests';
+import { fetchUserBookingsRequests, acceptBooking, rejectBooking, BookingResponse } from '../utils/requests';
 
 export default function MyTripsPage() {
   const [userType] = useUserType();
-  const [pendingUserBookings, setPendingUserBookings] = useState<any[]>([]);
-  const [acceptedUserBookings, setAcceptedUserBookings] = useState<any[]>([]);
+  const [pendingUserBookings, setPendingUserBookings] = useState<BookingResponse | null>();
+  const [acceptedUserBookings, setAcceptedUserBookings] = useState<BookingResponse | null>();
   const [refreshKey, setRefreshKey] = useState(0);
   const {userPosts, userRequests, refreshUserActivity} = useUserActivity();
 
