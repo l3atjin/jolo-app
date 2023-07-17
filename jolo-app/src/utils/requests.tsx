@@ -51,6 +51,44 @@ export async function fetchUserPosts(userType: UserType) {
   return data;
 }
 
+export async function fetchUserRequests(userType: UserType) {
+  const { data: { user } } = await supabase.auth.getUser();
+  let query = supabase
+    .from("requests")
+    .select(`
+      id,
+      departure_time,
+      author: profiles (first_name, avatar_url),
+      departure_location:locations!requests_departure_location_id_fkey (location_name),
+      destination_location:locations!requests_destination_location_id_fkey (location_name),
+      departure_day,
+      time_of_day,
+      description
+    `)
+    .eq("user_id", user?.id);
+  
+  type Request = Database["public"]["Tables"]["requests"]["Row"];
+  type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+  type Location = Database["public"]["Tables"]["locations"]["Row"];
+
+  const { data, error } = await query.returns<
+    (Request & {
+      author: Profile;
+      departure_location: Location;
+      destination_location: Location;
+    })[]
+  >();
+  
+  console.log("User requests:", JSON.stringify(data, null, 2))
+
+  if (error) {
+    console.log("Error fetching user requests: ", error);
+    throw error;
+  }
+
+  return data;
+}
+
 async function getLocationId(locationName: string) {
   const { data: locationData, error } = await supabase
     .from("locations")
@@ -112,7 +150,7 @@ export async function insertBookingRider(post: PostResponse[0] | null, message: 
   }
 }
 
-export async function insertBookingDriver(driverPost: PostType | null, message: string, riderRequest: RequestType | null) {
+export async function insertBookingDriver(driverPost: PostResponse[0] | null, message: string, riderRequest: RequestResponse[0] | null) {
   const user = await getUserDetails();
 
   if (user) {

@@ -4,7 +4,7 @@ import Booking from '../components/Booking';
 import Post from '../components/Post';
 import { UserTypeProvider, useUserType } from '../context/UserTypeProvider';
 import { BasePostType, PostType, RequestType } from '../types';
-import { fetchUserPosts, fetchUserBookingsRequests, updateBooking, acceptBooking, rejectBooking } from '../utils/requests';
+import { fetchUserPosts, fetchUserBookingsRequests, acceptBooking, rejectBooking } from '../utils/requests';
 
 export default function MyTripsPage() {
   const [userPosts, setUserPosts] = useState<PostType[] | RequestType[] | null>(null);

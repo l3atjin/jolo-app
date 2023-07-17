@@ -7,6 +7,7 @@ import { SearchParams } from "./types";
 import { fetchRequests, RequestResponse, insertBookingDriver, PostResponse, fetchUserPosts } from "../utils/requests"; // create these functions
 import { RequestModal } from "../components/RequestModal";
 import Post from "../components/Post";
+import { useUserActivity } from "../context/UserPostsProvider";
 
 export default function RequestSearchPage() {
   const [userType] = useUserType();
@@ -19,16 +20,13 @@ export default function RequestSearchPage() {
     null,
   );
   const [rideDetails, setRideDetails] = useState("");
-  const [userPosts, setUserPosts] = useState<PostResponse | null>(
-    null,
-  );
+  const {userPosts, refreshUserActivity} = useUserActivity();
   // Fetch requests on component mount
   useEffect(() => {
     async function fetchInitialData() {
       const initialData: RequestResponse = await fetchRequests();
       setData(initialData);
-      const initialUserPosts = await fetchUserPosts(userType);
-      setUserPosts(initialUserPosts);
+      refreshUserActivity();
       setIsLoading(false);
     }
     fetchInitialData();
