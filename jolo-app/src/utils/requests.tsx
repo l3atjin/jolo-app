@@ -211,6 +211,7 @@ export async function insertPost(params: PostType) {
   if (user) {
     const departureId = await getLocationId(params.departure);
     const destinationId = await getLocationId(params.destination);
+    const time = params.exactTime.toLocaleTimeString();
 
     const newData =  { 
       user_id: user.id,
@@ -219,9 +220,10 @@ export async function insertPost(params: PostType) {
       available_seats: params.availableSeats,
       fee: params.fee,
       description: params.description,
-      time_of_day: params.timeOfDay,
+      ...(params.timeOfDay !== "Цаг оруулах" &&
+        { time_of_day: params.timeOfDay }),
       departure_day: params.date,
-      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime })
+      ...(params.timeOfDay === "Цаг оруулах" && { departure_time: params.exactTime.toTimeString().split(' ')[0] })
     }
     insertIntoTable("posts", newData);
 

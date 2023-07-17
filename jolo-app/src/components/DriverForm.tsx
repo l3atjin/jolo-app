@@ -1,5 +1,6 @@
 import { Box, Heading, Input } from "native-base";
 import React, { useState } from "react";
+import { useUserActivity } from "../context/UserPostsProvider";
 import { PostType } from "../types";
 import { insertPost } from "../utils/requests";
 import PostForm from "./PostForm";
@@ -7,13 +8,15 @@ import PostForm from "./PostForm";
 export default function DriverForm() {
   const [availableSeats, setAvailableSeats] = useState("");
   const [fee, setFee] = useState("");
+  const { refreshUserActivity } = useUserActivity();
 
-  const handleSubmit = (data: PostType) => {
+  const handleSubmit = async (data: PostType) => {
     // Handle submission specifically for Driver
     // add a check here to see if driver went through backrgound check
     data.availableSeats = availableSeats;
     data.fee = fee;
-    insertPost(data);
+    await insertPost(data);
+    await refreshUserActivity();
   };
 
   return (

@@ -32,12 +32,6 @@ export default function PostForm({ onSubmit, children }) {
     };
     onSubmit(requestData);
   };
-
-  const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setDate(currentDate);
-  };
-
   return (
     <Box mt="5">
       <Input

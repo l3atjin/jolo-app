@@ -1,13 +1,16 @@
 import { Box, Heading } from "native-base";
 import React from "react";
+import { useUserActivity } from "../context/UserPostsProvider";
 import { RequestType } from "../types";
 import { insertRequest } from "../utils/requests";
 import PostForm from "./PostForm";
 
 export default function RiderForm() {
-  const handleSubmit = (data: RequestType) => {
+  const { refreshUserActivity } = useUserActivity();
+  const handleSubmit = async (data: RequestType) => {
     // Handle submission specifically for Rider
-    insertRequest(data);
+    await insertRequest(data);
+    await refreshUserActivity();
   };
 
   return (
