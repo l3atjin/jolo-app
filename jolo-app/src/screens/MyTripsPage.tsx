@@ -2,22 +2,22 @@ import { ScrollView, Box, Heading } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Booking from '../components/Booking';
 import Post from '../components/Post';
-import { UserTypeProvider, useUserType } from '../context/UserTypeProvider';
-import { BasePostType, PostType, RequestType } from '../types';
-import { fetchUserPosts, fetchUserBookingsRequests, acceptBooking, rejectBooking } from '../utils/requests';
+import Request from '../components/Request';
+import { useUserActivity } from '../context/UserPostsProvider';
+import { useUserType } from '../context/UserTypeProvider';
+import { fetchUserBookingsRequests, acceptBooking, rejectBooking } from '../utils/requests';
 
 export default function MyTripsPage() {
-  const [userPosts, setUserPosts] = useState<PostType[] | RequestType[] | null>(null);
   const [userType] = useUserType();
   const [pendingUserBookings, setPendingUserBookings] = useState<any[]>([]);
   const [acceptedUserBookings, setAcceptedUserBookings] = useState<any[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const {userPosts, userRequests, refreshUserActivity} = useUserActivity();
 
   useEffect(() => {
     async function getUserData() {
-      const userPosts = await fetchUserPosts(userType);
+      await refreshUserActivity();
       const { pendingBookings, acceptedBookings } = await fetchUserBookingsRequests(userType);
-      setUserPosts(userPosts);
       setPendingUserBookings(pendingBookings);
       setAcceptedUserBookings(acceptedBookings);
     }
@@ -65,7 +65,24 @@ export default function MyTripsPage() {
         {acceptedUserBookings?.map((booking) => (
           <Booking key={booking.id} booking={booking} onAccept={handleAccept} onReject={handleReject} isPending={false}/>
         ))}
-        <Heading mt={20}>{userType === "driver" ? "My Posts:" : "My Requests"}</Heading>
+        {userPosts &&
+          <Box>
+            <Heading mt={20}>My Posts</Heading>
+            {userPosts.map((post) => (
+              <Post key={post.id} post={post} onClick={() => handlePostClick(post)} />
+            ))}
+          </Box>
+        }
+
+        {userRequests &&
+          <Box>
+            <Heading mt={20}>My Requests</Heading>
+            {userRequests.map((request) => (
+              <Request key={request.id} request={request} onClick={() => handlePostClick(request)} />
+            ))}
+          </Box>
+        }
+        
         {userPosts?.map((post) => (
           <Post key={post.id} post={post} onClick={() => handlePostClick(post)} />
         ))}
