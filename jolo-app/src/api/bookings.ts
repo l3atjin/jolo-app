@@ -1,7 +1,7 @@
 import { Database } from "../../lib/database.types";
 import { supabase } from "../api/supabase";
 import { PostType, RequestType, UserType } from "../types";
-import { PostResponse, RequestResponse } from "../utils/requests";
+import { PostResponse, RequestResponse } from "./types";
 import { getUserDetails } from "./users";
 import { getPostAuthor, insertIntoTable } from "./utils";
 
