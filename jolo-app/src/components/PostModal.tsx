@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PostResponse } from "../utils/requests";
+import { PostResponse } from "../api/types";
 import { Button, Input, Modal, Text } from "native-base";
 import { useUserType } from "../context/UserTypeProvider";
 

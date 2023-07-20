@@ -1,5 +1,8 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { fetchUserPosts, PostResponse, RequestResponse, fetchUserRequests } from '../utils/requests';
+import { fetchUserPosts } from '../api/posts';
+import { PostResponse } from '../api/types';
+import { RequestResponse } from '../api/types';
+import { fetchUserRequests } from '../api/requests';
 import { UserTypeProvider, useUserType } from './UserTypeProvider';
 
 interface UserPostsContextProps {

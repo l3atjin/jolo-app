@@ -2,7 +2,7 @@ import { Box, Heading, Input } from "native-base";
 import React, { useState } from "react";
 import { useUserActivity } from "../context/UserPostsProvider";
 import { PostType } from "../types";
-import { insertPost } from "../utils/requests";
+import { insertPost } from "../api/posts";
 import PostForm from "./PostForm";
 
 export default function DriverForm() {

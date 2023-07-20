@@ -5,7 +5,8 @@ import Post from '../components/Post';
 import Request from '../components/Request';
 import { useUserActivity } from '../context/UserPostsProvider';
 import { useUserType } from '../context/UserTypeProvider';
-import { fetchUserBookingsRequests, acceptBooking, rejectBooking, BookingResponse } from '../utils/requests';
+import { fetchUserBookingsRequests, acceptBooking, rejectBooking } from '../api/bookings';
+import { BookingResponse } from '../api/types';
 
 export default function MyTripsPage() {
   const [userType] = useUserType();

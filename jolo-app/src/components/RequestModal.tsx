@@ -1,7 +1,7 @@
 import { Button, Input, Modal, Text } from 'native-base';
 import React, { ReactNode } from 'react'
 import { useUserType } from '../context/UserTypeProvider';
-import { RequestResponse } from '../utils/requests';
+import { RequestResponse } from '../api/types';
 
 interface RequestModalProps {
   request: RequestResponse[0] | null;

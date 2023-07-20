@@ -2,7 +2,7 @@ import { Box, Heading } from "native-base";
 import React from "react";
 import { useUserActivity } from "../context/UserPostsProvider";
 import { RequestType } from "../types";
-import { insertRequest } from "../utils/requests";
+import { insertRequest } from "../api/requests";
 import PostForm from "./PostForm";
 
 export default function RiderForm() {

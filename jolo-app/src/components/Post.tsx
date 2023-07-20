@@ -1,7 +1,7 @@
 import { Avatar, Box, HStack, Spacer, Text, VStack } from "native-base";
 import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { PostResponse } from "../utils/requests";
+import { PostResponse } from "../api/types";
 
 interface PostComponentProps {
   post: PostResponse[0];

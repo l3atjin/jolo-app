@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Box,
   Button,
@@ -10,8 +10,12 @@ import {
 } from "native-base";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+interface PostFormProps {
+  onSubmit: (data: any) => void;
+  children: ReactNode;
+}
 
-export default function PostForm({ onSubmit, children }) {
+export default function PostForm({ onSubmit, children }: PostFormProps) {
   const [departure, setDeparture] = useState("Дархан");
   const [destination, setDestination] = useState("Улаанбаатар");
   const [date, setDate] = useState(new Date());

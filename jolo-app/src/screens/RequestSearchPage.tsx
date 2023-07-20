@@ -4,7 +4,9 @@ import Request from "../components/Request"; // make sure you have this componen
 import { useUserType } from "../context/UserTypeProvider";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
-import { fetchRequests, RequestResponse, insertBookingDriver, PostResponse, fetchUserPosts } from "../utils/requests"; // create these functions
+import { fetchRequests } from "../api/requests"; // create these functions
+import { insertBookingDriver } from "../api/bookings"; // create these functions
+import { RequestResponse, PostResponse } from "../api/types"; // create these functions
 import { RequestModal } from "../components/RequestModal";
 import Post from "../components/Post";
 import { useUserActivity } from "../context/UserPostsProvider";

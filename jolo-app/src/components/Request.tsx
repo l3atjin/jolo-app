@@ -1,7 +1,7 @@
 import { Avatar, Box, HStack, Spacer, Text, VStack } from "native-base";
 import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { RequestResponse } from "../utils/requests"; // change this to your actual RequestResponse type
+import { RequestResponse } from "../api/types"; // change this to your actual RequestResponse type
 
 interface RequestComponentProps {
   request: RequestResponse[0];

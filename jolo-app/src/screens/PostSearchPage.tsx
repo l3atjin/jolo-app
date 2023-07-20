@@ -4,7 +4,9 @@ import Post from "../components/Post";
 import { useUserType } from "../context/UserTypeProvider";
 import SearchForm from "../components/SearchForm";
 import { SearchParams } from "./types";
-import { fetchPosts, PostResponse, insertBookingRider } from "../utils/requests";
+import { fetchPosts } from "../api/posts";
+import { PostResponse } from "../api/types";
+import { insertBookingRider } from "../api/bookings";
 import { PostModal } from "../components/PostModal";
 
 export default function PostSearchPage() {
