@@ -45,5 +45,5 @@ export async function fetchConversations() {
     });
   });
   
-  return Object.values(conversations);
+  return conversations;
 }

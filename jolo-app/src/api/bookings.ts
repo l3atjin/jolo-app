@@ -2,11 +2,10 @@ import { Database } from "../../lib/database.types";
 import { supabase } from "../api/supabase";
 import { PostType, RequestType, UserType } from "../types";
 import { PostResponse, RequestResponse } from "./types";
-import { getUserDetails } from "./users";
 import { getPostAuthor, insertIntoTable } from "./utils";
 
 export async function insertBookingRider(post: PostResponse[0] | null, message: string) {
-  const user = await getUserDetails();
+  const { data: { user } } = await supabase.auth.getUser();
   const driver_id = await getPostAuthor(post?.id, "posts");
   if (user && post) {
     const newData =  { 
@@ -26,7 +25,7 @@ export async function insertBookingRider(post: PostResponse[0] | null, message: 
 }
 
 export async function insertBookingDriver(driverPost: PostResponse[0] | null, message: string, riderRequest: RequestResponse[0] | null) {
-  const user = await getUserDetails();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
     const rider_id = await getPostAuthor(riderRequest?.id, "requests");
@@ -49,7 +48,7 @@ export async function insertBookingDriver(driverPost: PostResponse[0] | null, me
 }
 
 export async function fetchUserBookingsRequests(userType: UserType) {
-  const user = await getUserDetails();
+  const { data: { user } } = await supabase.auth.getUser();
   type Post = Database["public"]["Tables"]["posts"]["Row"];
   type Booking = Database["public"]["Tables"]["bookings"]["Row"];
   type Profile = Database["public"]["Tables"]["profiles"]["Row"];

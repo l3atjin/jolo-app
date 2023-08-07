@@ -4,11 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import Message from "../components/Message";
 import { fetchConversations } from "../api/messages"; 
 import { supabase } from "../api/supabase";
+import { getUserDetails } from '../api/users';
 
 export default function InboxPage() {
-  const [conversations, setConversations] = useState([]);
+  const [conversations, setConversations] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function getConversations() {
@@ -16,15 +18,49 @@ export default function InboxPage() {
       setConversations(conversationsData);
       setIsLoading(false);
     }
+    async function fetchUser() {
+      const user = await supabase.auth.getUser();
+      setUser(user);
+    }
+    
 
     getConversations();
+    fetchUser();
     const channel = supabase
     .channel('postgresChangesChannel')
     .on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
       table: 'messages'
-    }, payload => console.log("message added: ", payload))
+    }, 
+    async (payload) => {
+      console.log("message added: ", payload);
+      const { new: newMessage } = payload; // new message from the payload
+      const otherUserId = newMessage.sender_id !== user.id ? newMessage.sender_id : newMessage.receiver_id;
+      const otherUserDetails = await getUserDetails(otherUserId);
+      
+      setConversations(prevConversations => {
+        if(prevConversations[otherUserId]) {
+          // If conversation with the user already exists, append new message
+          return {
+            ...prevConversations,
+            [otherUserId]: {
+              ...prevConversations[otherUserId],
+              messages: [...prevConversations[otherUserId].messages, newMessage]
+            }
+          }
+        } else {
+          // If conversation with the user does not exist, create a new one
+          return {
+            ...prevConversations,
+            [otherUserId]: {
+              otherUser: newMessage.sender_id === user.id ? newMessage.receiver : newMessage.sender,
+              messages: [newMessage]
+            }
+          }
+        }
+      });
+    })
     .subscribe()
 
     return () => {
@@ -41,7 +77,7 @@ export default function InboxPage() {
       {isLoading ? (
         <Spinner />
       ) : (
-        conversations.map((conversation, index) => (
+        Object.values(conversations).map((conversation, index) => (
           <Message key={index} conversation={conversation} onClick={handleConversationClick} />
         ))
       )}

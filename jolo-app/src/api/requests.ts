@@ -1,7 +1,6 @@
 import { Database } from "../../lib/database.types";
 import { supabase } from "../api/supabase";
 import { PostType, RequestType, UserType } from "../types";
-import { getUserDetails } from "./users";
 import { getLocationId, insertIntoTable } from "./utils";
 
 export async function fetchUserRequests(userType: UserType) {
@@ -44,7 +43,7 @@ export async function fetchUserRequests(userType: UserType) {
 
 export async function insertRequest(params: RequestType) {
   console.log("PARAMS ARE:", params);
-  const user = await getUserDetails();
+  const { data: { user } } = await supabase.auth.getUser();
   console.log("user id is", user?.id);
 
   if (user) {
