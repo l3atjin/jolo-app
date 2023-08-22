@@ -47,3 +47,39 @@ export async function fetchConversations() {
   
   return conversations;
 }
+
+export async function sendMessage(newMessage, sender_id, receiver_id) {
+  const { data, error } = await supabase
+    .from('messages')
+    .insert([
+      {
+        content: newMessage,
+        sender_id: sender_id,
+        receiver_id: receiver_id
+      }
+    ]);
+
+  if (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+
+  // data will contain the newly inserted message data
+  // const message = {
+  //   id: data[0].id,
+  //   content: data[0].content,
+  //   created_at: data[0].created_at,
+  //   sender: {
+  //     id: data[0].sender_id,
+  //     first_name: data[0].sender.first_name,
+  //     avatar_url: data[0].sender.avatar_url
+  //   },
+  //   receiver: {
+  //     id: data[0].receiver_id,
+  //     first_name: data[0].receiver.first_name,
+  //     avatar_url: data[0].receiver.avatar_url
+  //   }
+  // };
+
+  // return message;
+}

@@ -36,7 +36,7 @@ export default function InboxPage() {
     async (payload) => {
       console.log("message added: ", payload);
       const { new: newMessage } = payload; // new message from the payload
-      const otherUserId = newMessage.sender_id !== user.id ? newMessage.sender_id : newMessage.receiver_id;
+      const otherUserId = newMessage.sender_id !== user!.id ? newMessage.sender_id : newMessage.receiver_id;
       const otherUserDetails = await getUserDetails(otherUserId);
       
       setConversations(prevConversations => {

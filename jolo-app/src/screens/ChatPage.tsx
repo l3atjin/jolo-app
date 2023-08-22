@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, VStack, Input, Button, ScrollView, HStack, Text } from "native-base";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { fetchMessages, sendMessage } from "../api/messages";
+import { sendMessage } from "../api/messages";
 import { supabase } from "../api/supabase";
 import { getUserDetails } from "../api/users";
+import { useAuth } from "../context/AuthProvider";
+import { Header } from "@react-navigation/stack";
 
 type UserDetails = {
   id: string;
@@ -11,29 +13,56 @@ type UserDetails = {
   avatar_url: string;
 } | null;
 
+type Message = {
+  id: string;
+  content: string;
+  created_at: string;
+  sender: UserDetails;
+  receiver: UserDetails;
+};
+
+type Conversation = {
+  otherUser: UserDetails;
+  messages: Message[];
+};
+
 const ChatPage = () => {
   const route = useRoute();
-  const { conversation } = route.params;
-  const [messages, setMessages] = useState(conversation.messages);
-  const [newMessage, setNewMessage] = useState('');
+  const { conversation }: { conversation: Conversation } = route.params;
+  const [messages, setMessages] = useState<Message[]>(conversation.messages);
+  const [newMessage, setNewMessage] = useState<string>('');
   const navigation = useNavigation();
-  const [userDetails, setUserDetails] = useState<UserDetails>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const { user } = useAuth();
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() === '') {
+    if (newMessage.trim() === '' || !user || !conversation.otherUser) {
       return;
     }
-    
-    const messageData = await sendMessage(newMessage, conversation.otherUser.id);
-    setMessages((prevMessages) => [...prevMessages, messageData]);
-    setNewMessage('');
+
+    try {
+      await sendMessage(newMessage, user.id, conversation.otherUser.id);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
+
 
   useEffect(() => {
     const getUserDetailsAndSubscribe = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const details = await getUserDetails(user?.id);
-      setUserDetails(details);
+      console.log("sample message", JSON.stringify(messages[0], null, 2));
+      // console.log(JSON.stringify(user, null, 2));
+
+      if (!user) {
+        throw new Error('Login first');
+      }
+
+      const details = await getUserDetails(user.id);
+      //console.log("Userdetails", JSON.stringify(userDetails, null, 2));
+      setIsLoading(false);
+      //console.log("detalils", details);
 
       const channel = supabase
         .channel('postgresChangesChannel')
@@ -44,42 +73,50 @@ const ChatPage = () => {
         },
         (payload) => {
             const { new: newMessage } = payload;
-            console.log("payload is:", JSON.stringify(newMessage, null, 2));
-            console.log('userDetails.id:', userDetails?.id);
-            console.log('otherUser.id:', conversation.otherUser.id);
-            console.log('newMessage.sender_id:', newMessage.sender_id);
-            console.log('newMessage.receiver_id:', newMessage.receiver_id);
-            if([userDetails?.id, conversation.otherUser.id].includes(newMessage.sender_id) && 
-              [userDetails?.id, conversation.otherUser.id].includes(newMessage.receiver_id)) {
+            if([user?.id, conversation.otherUser!.id].includes(newMessage.sender_id) && 
+              [user?.id, conversation.otherUser!.id].includes(newMessage.receiver_id)) {
                 // If the new message is related to the current conversation, update messages
-                newMessage.sender = newMessage.sender_id === conversation.otherUser.id ? conversation.otherUser : userDetails;
-                newMessage.receiver = newMessage.receiver_id === conversation.otherUser.id ? conversation.otherUser : userDetails;
+                console.log("details:", JSON.stringify(details, null, 2));
+                const tempDetails = {
+                  id: details[0].id,
+                  first_name: details[0].first_name,
+                  avatar_url: details[0].avatar_url
+                };
+                //console.log("tempdetails:", JSON.stringify(tempDetails, null, 2));
+                newMessage.sender = newMessage.sender_id === conversation.otherUser.id ? conversation.otherUser : tempDetails;
+                newMessage.receiver = newMessage.receiver_id === conversation.otherUser.id ? conversation.otherUser : tempDetails;
+                //console.log("newmessage: ", JSON.stringify(newMessage, null, 2));
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             }
         })
         .subscribe()
-
       return () => {
         supabase.removeChannel(channel);
       };
     }
 
     getUserDetailsAndSubscribe();
-  }, [userDetails]);
+  }, [user]);
 
   return (
     <Box flex={1}>
-      <Button mt = {20} onPress={() => navigation.goBack()}>Back to Inbox</Button>
-      <ScrollView>
-        <VStack p="2">
-          {messages.map((message, index) => (
-            <HStack key={index} alignItems="center" space={2} my="2">
-              <Text>{message.sender.first_name}:</Text>
-              <Text>{message.content}</Text>
-            </HStack>
-          ))}
-        </VStack>
-      </ScrollView>
+      <Button mt={20} onPress={() => navigation.goBack()}>
+        Back to Inbox
+      </Button>
+      {!isLoading ? ( // Check if user details are loaded before displaying messages
+        <ScrollView>
+          <VStack p="2">
+            {messages.map((message, index) => (
+              <HStack key={index} alignItems="center" space={2} my="2">
+                <Text>{message.sender!.first_name}:</Text>
+                <Text>{message.content}</Text>
+              </HStack>
+            ))}
+          </VStack>
+        </ScrollView>
+      ) : (
+        <Text>Loading...</Text>
+      )}
       <Box>
         <Input
           placeholder="New Message"

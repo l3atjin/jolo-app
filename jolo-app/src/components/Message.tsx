@@ -28,7 +28,7 @@ const Message: React.FC<MessageProps> = ({ conversation, onClick }) => {
           <Avatar source={{ uri: conversation.otherUser.avatar_url }} />
           <VStack alignItems="start">
             <Text bold>{conversation.otherUser.first_name}</Text>
-            <Text>{conversation.messages[0].content}</Text>
+            <Text>{conversation.messages[conversation.messages.length - 1].content}</Text>
           </VStack>
         </HStack>
       </Box>
