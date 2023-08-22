@@ -52,7 +52,6 @@ const ChatPage = () => {
 
   useEffect(() => {
     const getUserDetailsAndSubscribe = async () => {
-      console.log("sample message", JSON.stringify(messages[0], null, 2));
       // console.log(JSON.stringify(user, null, 2));
 
       if (!user) {
@@ -76,7 +75,6 @@ const ChatPage = () => {
             if([user?.id, conversation.otherUser!.id].includes(newMessage.sender_id) && 
               [user?.id, conversation.otherUser!.id].includes(newMessage.receiver_id)) {
                 // If the new message is related to the current conversation, update messages
-                console.log("details:", JSON.stringify(details, null, 2));
                 const tempDetails = {
                   id: details[0].id,
                   first_name: details[0].first_name,

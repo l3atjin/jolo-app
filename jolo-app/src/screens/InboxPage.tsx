@@ -5,15 +5,18 @@ import Message from "../components/Message";
 import { fetchConversations } from "../api/messages"; 
 import { supabase } from "../api/supabase";
 import { getUserDetails } from '../api/users';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function InboxPage() {
   const [conversations, setConversations] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     async function getConversations() {
+      console.log("fetching conversations in inbox page ...");
       const conversationsData = await fetchConversations();
       setConversations(conversationsData);
       setIsLoading(false);
@@ -34,7 +37,6 @@ export default function InboxPage() {
       table: 'messages'
     }, 
     async (payload) => {
-      console.log("message added: ", payload);
       const { new: newMessage } = payload; // new message from the payload
       const otherUserId = newMessage.sender_id !== user!.id ? newMessage.sender_id : newMessage.receiver_id;
       const otherUserDetails = await getUserDetails(otherUserId);
@@ -66,7 +68,7 @@ export default function InboxPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [isFocused]);
 
   const handleConversationClick = (conversation: any) => {
     navigation.navigate("Chat", { conversation });
