@@ -9,7 +9,7 @@ import { PostResponse } from "../api/types";
 import { insertBookingRider } from "../api/bookings";
 import { PostModal } from "../components/PostModal";
 
-export default function PostSearchPage() {
+export default function PostSearchPage( {navigation} ) {
   const [userType] = useUserType();
   const [data, setData] = useState<PostResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +56,10 @@ export default function PostSearchPage() {
 
   };
 
+  const openChat = () => {
+    navigation.navigate("InboxNavigation");
+  }
+
   return (
     <Box p="5" bg="#F5F5F5" flex={1}>
       <VStack space={3}>
@@ -79,6 +83,7 @@ export default function PostSearchPage() {
           rideDetails={rideDetails}
           setRideDetails={setRideDetails}
           submitRequest={submitRequest}
+          openChat={openChat}
         />
       </VStack>
     </Box>

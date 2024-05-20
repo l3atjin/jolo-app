@@ -32,8 +32,8 @@ export async function getPostAuthor(post_id: string | undefined, table: string) 
 
 export async function insertIntoTable(tableName: string, data: any) {
   const { data: response, error } = await supabase
-    .from(tableName)
-    .insert(data);
+    .from("tableName")
+    .insert(data); 
 
   // handle response
   if (error) {

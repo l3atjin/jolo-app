@@ -9,10 +9,13 @@ interface PostModalProps {
   rideDetails: string;
   setRideDetails: (value: string) => void;
   submitRequest: () => void;
+  openChat: () => void;
 }
 
-export const PostModal: React.FC<PostModalProps> = ({ post, handleClose, rideDetails, setRideDetails, submitRequest }) => {
+export const PostModal: React.FC<PostModalProps> = ({ post, handleClose, rideDetails, setRideDetails, submitRequest, openChat }) => {
   const [userType] = useUserType();
+
+  // this function should navigate to the ChatPage with the post owner
   return (
     <Modal isOpen={post !== null} onClose={handleClose}>
       <Modal.Content maxWidth="400px">
@@ -32,6 +35,7 @@ export const PostModal: React.FC<PostModalProps> = ({ post, handleClose, rideDet
                 value={rideDetails}
                 onChangeText={setRideDetails}
               />
+          <Button onPress={openChat}>Contact Driver</Button>
         </Modal.Body>
         <Modal.Footer>
           <Button onPress={submitRequest}>Явяаа</Button>
